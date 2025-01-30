@@ -61,7 +61,6 @@ export async function authorize(request: AuthorizeRequestPayload, reply: Fastify
 
 export async function changeSettings(request: changeSettingsRequestPayload, reply: FastifyReply) {
     const decodedToken: {userId: number} = await request.jwtDecode();
-    console.log(request.query)
     try {
         await prisma.user.update({
             data: {
