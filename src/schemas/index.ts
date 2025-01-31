@@ -21,35 +21,21 @@ export const editProfileSchema: FastifySchema = {
     }
 };
 
-export const registerUserSchema: FastifySchema = {
-    body: {
-        type: 'object',
-        properties: {
-            userId: { type: 'number' },
-            username: { type: 'string' },
-            profilePicture: { type: 'string' }
-        },
-
-        required: [ 'userId', 'username', 'profilePicture' ]
-    }
-};
-
 export const authorizeUserSchema: FastifySchema = {
-    body: {
+    querystring: {
         type: 'object',
         properties: {
-            token: { type: 'string' }
-        },
-
-        required: ['token']
+            queryParams: { type: 'string' }
+        }
     }
 };
+
 
 export const getUserSchema: FastifySchema = {
     params: {
         type: 'object',
         properties: {
-            id: { type: 'number' }
+            id: { type: 'string' }
         },
 
         required: ['id']

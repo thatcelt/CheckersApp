@@ -14,7 +14,7 @@ datasource db {
 }
 
 model User {
-  userId           Int          @id @unique
+  userId           String       @id @unique
   username         String
   language         String       @default("en")
   profilePicture   String
@@ -28,9 +28,8 @@ model User {
 }
 
 model Friendship {
-  id       Int @id @default(autoincrement())
-  userId   Int
-  friendId Int
+  userId   String
+  friendId String
 
   user   User @relation("UserToFriend", fields: [userId], references: [userId])
   friend User @relation("FriendToUser", fields: [friendId], references: [userId])
@@ -39,8 +38,8 @@ model Friendship {
 }
 
 model PlayedGame {
-  playedGameId String              @id
-  userId       Int
+  playedGameId String           @id
+  userId       String
   status       PlayedGameStatus
   playedDate   Int
 

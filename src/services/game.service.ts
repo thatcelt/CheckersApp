@@ -1,12 +1,15 @@
-import { CachedGame, gamesCache, inGameCache, playerPlaces, Turn } from "../constants";
-import { WebSocket } from "@fastify/websocket"
-import { OnlineGameWebsocketMessage } from "../controllers/types";
-import { gameSendMessages } from "../utils/utils";
-import { Piece } from "../utils/getCaptures";
-import prisma from "../utils/prisma";
+import { CachedGame, drawTimeoutValue, emptyBoard, gamesCache, inGameCache, maxPlayers, playerPlaces, Turn, usersCache } from '../constants';
+import { WebSocket } from '@fastify/websocket';
+import { OnlineGameWebsocketMessage } from '../controllers/types';
+import { gameSendMessages, isValidScores } from '../utils/utils';
+import { Piece } from '../utils/getCaptures';
+import prisma from '../utils/prisma';
+import { FastifyReply } from 'fastify';
+import { Game } from '../utils/game';
+import { v4 as uuidv4 } from 'uuid';
 
 
-export async function setGameResults(gameId: string, players: number[], winnerId: number, isDrawed: boolean) {
+export async function setGameResults(gameId: string, players: string[], winnerId: string, isDrawed: boolean) {
     players.forEach(async player => {
         const connectedSocket = inGameCache.get(player)
         if (connectedSocket) {
@@ -42,7 +45,7 @@ export async function setGameResults(gameId: string, players: number[], winnerId
     })
 }
 
-export async function makeMove(socket: WebSocket, game: CachedGame, websocketMessage: OnlineGameWebsocketMessage, userId: number) {
+export async function makeMove(socket: WebSocket, game: CachedGame, websocketMessage: OnlineGameWebsocketMessage, userId: string) {
     if (!websocketMessage.move)
         return socket.send(JSON.stringify({ error: 'INVALID_MOVE' }));
 
@@ -81,7 +84,7 @@ export async function makeMove(socket: WebSocket, game: CachedGame, websocketMes
     }
 }
 
-export async function surrenderGame(game: CachedGame, surrenderer: number) {
+export async function surrenderGame(game: CachedGame, surrenderer: string) {
     const checkedWinner = game.players.indexOf(surrenderer) + 1 == 1 ? 'Black' : 'White';
 
     gameSendMessages(game.players, JSON.stringify({
@@ -93,7 +96,7 @@ export async function surrenderGame(game: CachedGame, surrenderer: number) {
     if (playerPlace) await setGameResults(game.gameId, game.players, game.players[playerPlace], false);
 }
 
-export async function drawGameRequest(game: CachedGame, requesterId: number, receipientId: number) {
+export async function drawGameRequest(game: CachedGame, requesterId: string, receipientId: string) {
     game.drawTime = Date.now();
     game.drawRequesterId = requesterId
     gamesCache.set(game.gameId, game);
@@ -103,13 +106,13 @@ export async function drawGameRequest(game: CachedGame, requesterId: number, rec
         connectedSocket.send(JSON.stringify({ t: 'DRAW_REQUESTED' }));
 }
 
-export async function acceptDrawRequest(game: CachedGame, accepterId: number) {
+export async function acceptDrawRequest(game: CachedGame, accepterId: string) {
     const connectedSocket = inGameCache.get(accepterId)
     if (!connectedSocket) return
     
     if (game.drawRequesterId == accepterId)
         connectedSocket.send(JSON.stringify({ t: 'FORBIDDEN' }));
-    if (Date.now() - game.drawTime > 120)
+    if (Date.now() - game.drawTime > drawTimeoutValue)
         connectedSocket.send(JSON.stringify({ t: 'DRAW_TIMEOUT' }));
 
     gameSendMessages(game.players, JSON.stringify({
@@ -117,6 +120,46 @@ export async function acceptDrawRequest(game: CachedGame, accepterId: number) {
         reason: 'GAME_WAS_DRAWED'
     }));
     
-    const drawResult = playerPlaces.get('Draw');
+    const drawResult = playerPlaces.get('Draw')?.toString();
     if (drawResult) await setGameResults(game.gameId, game.players, drawResult, true);
+}
+
+export async function invitePlayerRequest(reply: FastifyReply, game: CachedGame, inviterId: string, playerId: string) {
+    try {
+        await prisma.friendship.findFirstOrThrow({
+            where: {
+                OR: [
+                    { friendId: inviterId, userId: playerId },
+                    { friendId: playerId, userId: inviterId }
+                ]
+            }
+        });
+
+        if (!inGameCache.get(playerId))
+            reply.code(400).send({ message: 'FRIEND_ALREADY_IN_GAME' });
+
+        const onlineSocket = usersCache.get(playerId)
+        if (!onlineSocket)
+            reply.code(400).send({ message: 'FRIEND_IS_OFFLINE' })
+
+        onlineSocket?.send(JSON.stringify({
+            t: 'INVITE',
+            gameId: game.gameId,
+            inviterId: inviterId
+        }));
+        
+    } catch (error) {
+        reply.code(403).send({ message: 'FORBIDDEN' });
+    }
+}
+
+export async function searchGameRequest(reply: FastifyReply, userId: string, joiningPlayerScores: number) {
+    const filteredGame = [...gamesCache.values()].find(game => game.players.length < maxPlayers && isValidScores(joiningPlayerScores, game.creatorScores));
+    if (filteredGame) reply.status(200).send({ message: 'GAME_IS_FOUND', gameId: filteredGame.gameId });
+
+    const createdGame = new Game(emptyBoard);
+    const gameId = uuidv4();
+
+    gamesCache.set(gameId, { gameId: gameId, players: [userId], game: createdGame, drawTime: 0, gameType: 'public', creatorScores: joiningPlayerScores });
+    reply.code(200).send({message: 'GAME_CREATED', gameId: gameId});
 }

@@ -1,23 +1,9 @@
 import prisma from '../utils/prisma';
+import { verifyTelegramWebAppData } from '../utils/checker';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { AuthorizeRequestPayload, RegisterRequestPayload, EditProfileRequestPayload, changeSettingsRequestPayload, GetUserParams } from './types';
-
-export async function registration(req: RegisterRequestPayload, reply: FastifyReply) {
-    if (await prisma.user.findUnique({ where: { userId: req.body.userId }}))
-        reply.code(400).send({ message: 'USER_EXIST' }); 
-
-    const newUser = await prisma.user.create({
-        data: {
-            userId: req.body.userId,
-            username: req.body.username,
-            profilePicture: req.body.profilePicture,
-            registrationDate: Date.now().toString()
-        }
-    });
-
-    const createdToken = await reply.jwtSign({userId: req.body.userId})
-    reply.status(200).send({ message: 'USER_CREATED', user: newUser, accesToken: createdToken });
-}
+import { EditProfileRequestPayload, changeSettingsRequestPayload, GetUserParams, TelegramUser } from './types';
+import { WebSocket } from '@fastify/websocket';
+import { usersCache } from '../constants';
 
 export async function getUser(req: FastifyRequest<{Params: GetUserParams}>, reply: FastifyReply) {
     const user = await prisma.user.findUnique({ where: { userId: req.params.id }}); 
@@ -27,7 +13,7 @@ export async function getUser(req: FastifyRequest<{Params: GetUserParams}>, repl
 }
 
 export async function editProfile(req: EditProfileRequestPayload, reply: FastifyReply) {
-    const decodedToken: {userId: number} = await req.jwtDecode();
+    const decodedToken: {userId: string} = await req.jwtDecode();
 
     try {
         await prisma.user.update({
@@ -45,18 +31,35 @@ export async function editProfile(req: EditProfileRequestPayload, reply: Fastify
     }
 }
 
-export async function authorize(request: AuthorizeRequestPayload, reply: FastifyReply) {
-    try {
-        const decodedToken: { userId: number } = await request.jwtDecode();
-        const user = await prisma.user.findUnique({ where: { userId: decodedToken.userId }});
-        reply.status(200).send({ message: 'AUTHORIZED', user: user});
-    } catch (error: any) {
-        reply.status(400).send({ message: error });
+export async function authorize(request: FastifyRequest, reply: FastifyReply) {
+    const webData = verifyTelegramWebAppData(request.raw.url?.split("?")[1] || "");
+
+    if (webData[0]) {
+        const telegramUser = webData[0] as TelegramUser;
+        telegramUser.id = telegramUser.id.toString();
+
+        let user = await prisma.user.findUnique({ where: { userId: telegramUser.id }}); 
+
+        if (!user) {
+            user = await prisma.user.create({
+                data: {
+                    userId: telegramUser.id,
+                    username: `${telegramUser.first_name} ${telegramUser.last_name}`,
+                    profilePicture: telegramUser.photo_url, 
+                    registrationDate: Date.now().toString()
+                }
+            })
+        }
+
+        const token = await reply.jwtSign(user); 
+        reply.status(200).send({ message: 'USER_AUTHORIZED', user: user, accessToken: token });
+    } else {
+        reply.code(400).send({ message: "INVALID_WEB_APP_INIT_DATA" });
     }
 }
 
 export async function changeSettings(request: changeSettingsRequestPayload, reply: FastifyReply) {
-    const decodedToken: {userId: number} = await request.jwtDecode();
+    const decodedToken: {userId: string} = await request.jwtDecode();
     try {
         await prisma.user.update({
             data: {
@@ -76,7 +79,7 @@ export async function changeSettings(request: changeSettingsRequestPayload, repl
 
 export async function getGameHistory(request: FastifyRequest, reply: FastifyReply) {
     try {
-        const decodedToken: { userId: number } = await request.jwtDecode();
+        const decodedToken: { userId: string } = await request.jwtDecode();
         const playedGames = await prisma.playedGame.findMany({
             where: {
                 userId: decodedToken.userId
@@ -103,4 +106,16 @@ export async function getRating(request: FastifyRequest, reply: FastifyReply) {
     } catch (error) {
         reply.status(400).send({ message: error });
     }
+}
+
+export async function onlineWebsocketConnect(socket: WebSocket, request: FastifyRequest) {
+    const decodedToken: { userId: string } = await request.jwtDecode();
+    
+    socket.on("open", () => {  
+        usersCache.set(decodedToken.userId, socket)
+    })
+
+    socket.on("close", () => {
+        usersCache.delete(decodedToken.userId)
+    })
 }

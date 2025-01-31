@@ -4,7 +4,7 @@ import { FastifyReply, FastifyRequest } from "fastify";
 
 
 export async function addFriend(request: FastifyRequest<{ Params: FriendParams }>, reply: FastifyReply) {
-    const decodedToken: { userId: number } = await request.jwtDecode();
+    const decodedToken: { userId: string } = await request.jwtDecode();
 
     await prisma.friendship.create({
         data: {
@@ -17,7 +17,7 @@ export async function addFriend(request: FastifyRequest<{ Params: FriendParams }
 }
 
 export async function removeFriend(request: FastifyRequest<{ Params: FriendParams }>, reply: FastifyReply) {
-    const decodedToken: { userId: number } = await request.jwtDecode();
+    const decodedToken: { userId: string } = await request.jwtDecode();
     
     try {
         await prisma.friendship.delete({
@@ -35,7 +35,7 @@ export async function removeFriend(request: FastifyRequest<{ Params: FriendParam
 }
 
 export async function getFriends(request: FastifyRequest, reply: FastifyReply) {
-    const decodedToken: { userId: number } = await request.jwtDecode();
+    const decodedToken: { userId: string} = await request.jwtDecode();
     const friends = await prisma.friendship.findMany({ where: { userId: decodedToken.userId }});
 
     reply.status(200).send({ message: "FRIENDS_COLLECTED", friends: friends });
