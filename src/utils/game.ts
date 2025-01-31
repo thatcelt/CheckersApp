@@ -1,5 +1,6 @@
-enum Piece { EMPTY = 0, WHITE_PIECE = 1, BLACK_PIECE = 2, WHITE_KING = 3, BLACK_KING = 4, SELECT = 9 }
-enum Turn { White = 1, Black = 2 }
+import { Turn } from "../constants";
+import { Piece } from "./getCaptures";
+
 type Position = [number, number];
 type Move = [Position, Position];
 const BOARD_SIZE = 8;

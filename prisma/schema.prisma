@@ -19,6 +19,7 @@ model User {
   language         String       @default("en")
   profilePicture   String
   registrationDate String
+  scores           Int          @default(0)
   possibleMoves    Boolean      @default(true)
   vibrationOnTap   Boolean      @default(true)
   friends          Friendship[] @relation("UserToFriend")
@@ -38,7 +39,7 @@ model Friendship {
 }
 
 model PlayedGame {
-  playedGameId Int              @id
+  playedGameId String              @id
   userId       Int
   status       PlayedGameStatus
   playedDate   Int

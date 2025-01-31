@@ -1,4 +1,6 @@
-import { FastifyRequest } from "fastify"
+import { FastifyRequest } from 'fastify';
+import { GameTypes, Turn } from '../constants';
+import { Position } from '../utils/getCaptures';
 
 export interface RegisterRequestBody {
     userId: number
@@ -39,6 +41,23 @@ export interface changeSettingsRequestPayload extends FastifyRequest {
 
 export type GetUserParams = {id: number}
 
+export type FriendParams = {id: number}
+
 export interface ChangeSettingsRequest {
     Querystring: ChangeSettingsRequestQuery;
+}
+
+export interface CreateGameRequestBody {
+    gameType: GameTypes
+}
+
+export interface CreateGameRequestPayload extends FastifyRequest {
+    body: CreateGameRequestBody
+}
+
+export type GameParams = { gameId: string }
+
+export type OnlineGameWebsocketMessage = { 
+    action: string
+    move?: Position[]
 }
