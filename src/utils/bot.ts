@@ -1,6 +1,6 @@
 
 class Bot {
-    static getAnus(params: any) {
+    static getBot(params: any) {
         
     }
 }

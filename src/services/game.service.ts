@@ -6,7 +6,6 @@ import { Piece } from '../utils/getCaptures';
 import prisma from '../utils/prisma';
 import { FastifyReply } from 'fastify';
 import { Game } from '../utils/game';
-import { Bot } from '../utils/bot';
 import { v4 as uuidv4 } from 'uuid';
 
 
