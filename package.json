@@ -3,6 +3,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@fastify/cors": "^10.0.2",
     "@fastify/jwt": "^9.0.3",
     "@fastify/websocket": "^11.0.2",
     "@prisma/client": "^6.3.0",

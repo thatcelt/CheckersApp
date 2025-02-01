@@ -1,5 +1,5 @@
-import { Turn } from "../constants";
-import { Piece } from "./getCaptures";
+import { Turn } from '../constants';
+import { Piece } from './getCaptures';
 
 type Position = [number, number];
 type Move = [Position, Position];

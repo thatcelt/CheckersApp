@@ -1,5 +1,6 @@
+import { usersCache } from "../constants";
 import prisma from "../utils/prisma";
-import { FriendParams } from "./types";
+import { FriendParams, GetFriendRequestParams } from "./types";
 import { FastifyReply, FastifyRequest } from "fastify";
 
 
@@ -34,9 +35,28 @@ export async function removeFriend(request: FastifyRequest<{ Params: FriendParam
     }
 }
 
-export async function getFriends(request: FastifyRequest, reply: FastifyReply) {
-    const decodedToken: { userId: string} = await request.jwtDecode();
-    const friends = await prisma.friendship.findMany({ where: { userId: decodedToken.userId }});
+export async function getFriends(request: FastifyRequest<{ Params: GetFriendRequestParams }>, reply: FastifyReply) {
+    const decodedToken: { userId: string } = await request.jwtDecode();
+    let friendships = await prisma.friendship.findMany({
+        include: {
+            user: true,
+            friend: true
+        },
+        where: {
+            OR: [
+                { userId: decodedToken.userId },
+                { friendId: decodedToken.userId }
+            ]
+        }
+    });
+    const friends = friendships.map(friendship => friendship.friend.userId == decodedToken.userId ? friendship.user : friendship.friend)
+
+
+    if (request.params.state == "active") {
+        friends.filter(friend => usersCache.has(friend.userId))
+    } else {
+        friends.filter(friend => !usersCache.has(friend.userId))
+    }
 
     reply.status(200).send({ message: "FRIENDS_COLLECTED", friends: friends });
 }

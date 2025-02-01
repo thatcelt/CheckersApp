@@ -25,10 +25,6 @@ export type GetUserParams = {id: string}
 
 export type FriendParams = {id: string}
 
-export interface ChangeSettingsRequest {
-    Querystring: ChangeSettingsRequestQuery;
-}
-
 export interface CreateGameRequestBody {
     gameType: GameTypes
 }
@@ -38,14 +34,36 @@ export interface CreateGameRequestPayload extends FastifyRequest {
 }
 
 export type GameParams = { gameId: string }
+export type GameWebsocketParams = { gameId: string, token: string }
+export type OnlineWebsocketParams = { gameId: string, token: string }
 
+export interface WebsocketQuery {
+    token: string
+}
+
+export interface OnlineWebsocketPayload extends FastifyRequest {
+    query: WebsocketQuery
+}
+
+export interface GameWebsocketPayload extends FastifyRequest {
+    query: WebsocketQuery,
+    params: GameWebsocketParams
+}
+
+
+export type BotGameWebsocketParams = { gameId: string, token: string };
 export type OnlineGameWebsocketMessage = { 
-    action: string
-    move?: Position[]
+    action: string;
+    move?: Position[];
+}
+
+export type BotGameWebsocketMessage = {
+    action: string;
+    move?: Position[];
 }
 
 export interface InvitePlayerRequestBody {
-    playerId: string
+    playerId: string;
 }
 
 export type TelegramUser = {
@@ -54,3 +72,5 @@ export type TelegramUser = {
     last_name: string
     photo_url: string
 }
+
+export type GetFriendRequestParams = { state: string }

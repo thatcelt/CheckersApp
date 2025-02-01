@@ -2,6 +2,7 @@ enum Piece { EMPTY = 0, WHITE_PIECE = 1, BLACK_PIECE = 2, WHITE_KING = 3, BLACK_
 type Position = [number, number];
 const BOARD_SIZE = 8;
 
+
 function getCaptures(board: Piece[][], pieceCoordinates: Position): Position[] {
     const piece = board[pieceCoordinates[0]][pieceCoordinates[1]];
     

@@ -1,15 +1,27 @@
 import prisma from '../utils/prisma';
 import { verifyTelegramWebAppData } from '../utils/checker';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { EditProfileRequestPayload, changeSettingsRequestPayload, GetUserParams, TelegramUser } from './types';
+import { EditProfileRequestPayload, changeSettingsRequestPayload, GetUserParams, TelegramUser, OnlineWebsocketPayload } from './types';
 import { WebSocket } from '@fastify/websocket';
 import { usersCache } from '../constants';
+import app from '../utils/app';
 
 export async function getUser(req: FastifyRequest<{Params: GetUserParams}>, reply: FastifyReply) {
+    const decodedToken: {userId: string} = await req.jwtDecode();
     const user = await prisma.user.findUnique({ where: { userId: req.params.id }}); 
+    let gameHistory = {}
+    
     if (!user)
         reply.status(400).send({ message: 'USER_NOT_FOUND' });
-    reply.status(200).send({ message: 'COLLECTED', user: user });
+
+    if (decodedToken.userId == req.params.id) {
+        gameHistory = await prisma.playedGame.findMany({
+            where: {
+                userId: decodedToken.userId
+            }
+        })
+    }
+    reply.status(200).send({ message: 'COLLECTED', user: user, gameHistory: gameHistory });
 }
 
 export async function editProfile(req: EditProfileRequestPayload, reply: FastifyReply) {
@@ -108,14 +120,19 @@ export async function getRating(request: FastifyRequest, reply: FastifyReply) {
     }
 }
 
-export async function onlineWebsocketConnect(socket: WebSocket, request: FastifyRequest) {
-    const decodedToken: { userId: string } = await request.jwtDecode();
+
+export async function onlineWebsocketConnect(socket: WebSocket, request: OnlineWebsocketPayload) {
+    const decodedToken: { userId: string } | null = app.jwt.decode(request.query.token);
+    if (!decodedToken) {
+        socket.close();
+        return;
+    }
     
-    socket.on("open", () => {  
-        usersCache.set(decodedToken.userId, socket)
+    socket.on('open', () => {  
+        usersCache.set(decodedToken.userId, socket);
     })
 
-    socket.on("close", () => {
-        usersCache.delete(decodedToken.userId)
+    socket.on('close', () => {
+        usersCache.delete(decodedToken.userId);
     })
 }

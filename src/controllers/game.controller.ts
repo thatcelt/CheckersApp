@@ -1,12 +1,13 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { drawTimeoutValue, emptyBoard, gamesCache, inGameCache, maxPlayers } from '../constants';
+import { drawTimeoutValue, emptyBoard, gamesCache, GameTypes, inGameCache, maxPlayers } from '../constants';
 import { v4 as uuidv4 } from 'uuid';
-import { CreateGameRequestPayload, GameParams, InvitePlayerRequestBody, OnlineGameWebsocketMessage } from './types';
+import { CreateGameRequestPayload, GameParams, GameWebsocketParams, InvitePlayerRequestBody, OnlineGameWebsocketMessage, BotGameWebsocketParams, BotGameWebsocketMessage, GameWebsocketPayload } from './types';
 import { Game, Piece } from '../utils/game';
-import { WebSocket } from "@fastify/websocket"
+import { WebSocket } from '@fastify/websocket';
 import { acceptDrawRequest, drawGameRequest, invitePlayerRequest, makeMove, searchGameRequest, surrenderGame } from '../services/game.service';
 import { getGameFromRequest, getGameFromSocket } from '../utils/utils';
 import prisma from '../utils/prisma';
+import app from '../utils/app';
 
 export async function createGame(request: CreateGameRequestPayload, reply: FastifyReply) {
     const decodedToken: { userId: string} = await request.jwtDecode();
@@ -18,10 +19,26 @@ export async function createGame(request: CreateGameRequestPayload, reply: Fasti
         where: {
             userId: decodedToken.userId
         }
-    })
+    });
 
     gamesCache.set(gameId, {gameId: gameId, players: [decodedToken.userId], game: createdGame, drawTime: 0, gameType: request.body.gameType, creatorScores: userData.scores});
-    reply.code(200).send({message: 'GAME_CREATED', gameId: gameId});
+    reply.code(200).send({ message: 'GAME_CREATED', gameId: gameId });
+}
+
+export async function createGameWithBot(request: FastifyRequest, reply: FastifyReply) {
+    const decodedToken: { userId: string} = await request.jwtDecode();
+    if (inGameCache.has(decodedToken.userId)) reply.status(400).send({ message: 'YOU_ALREADY_IN_GAME' });
+    
+    const createdGame = new Game(emptyBoard);
+    const gameId = uuidv4();
+    const userData = await prisma.user.findUniqueOrThrow({
+        where: {
+            userId: decodedToken.userId
+        }
+    });
+
+    gamesCache.set(gameId, { gameId: gameId, players: [decodedToken.userId, 'bot'], game: createdGame, drawTime: 0, gameType: GameTypes.PRIVATE, creatorScores: userData.scores });
+    reply.code(200).send({ message: 'GAME_CREATED', gameId: gameId });
 }
 
 export async function joinGame(request: FastifyRequest<{ Params: GameParams }>, reply: FastifyReply) {
@@ -35,27 +52,29 @@ export async function joinGame(request: FastifyRequest<{ Params: GameParams }>, 
         return;
     }
 
+    if (game.players.includes(decodedToken.userId)) reply.code(403).send({ message: 'FORBIDDEN' })
+
     if (game.players.length == maxPlayers) reply.status(400).send({message: 'GAME_IS_FULL' });
     
     game.players.push(decodedToken.userId);
-    const playerData = await prisma.user.findUniqueOrThrow({ where: { userId: game?.players[0] } });
-    const joinedPlayerData = await prisma.user.findUniqueOrThrow({ where: { userId: game?.players[1] } });
+    const playerData = await prisma.user.findUnique({ where: { userId: game?.players[0] } });
+    const joinedPlayerData = await prisma.user.findUnique({ where: { userId: game?.players[1] } });
 
     reply.code(200).send({message: 'JOINED_IN_GAME', game: {
         board: game.game.board,
         possibleMoves: game.game.getAllValidMoves(Piece.WHITE_PIECE),
         player: {
-            profilePicture: playerData.profilePicture,
-            username: playerData.username
+            profilePicture: playerData?.profilePicture,
+            username: playerData?.username
         }
     }});
     
     const connectedSocket = inGameCache.get(game.players[0])
     if (connectedSocket) connectedSocket.send(JSON.stringify({
-        t: 'PLAYER_JOINED',
+        message: 'PLAYER_JOINED',
         player: {
-            profilePicture: joinedPlayerData.profilePicture,
-            username: joinedPlayerData.username
+            profilePicture: joinedPlayerData?.profilePicture,
+            username: joinedPlayerData?.username
         }
     }));
 
@@ -109,8 +128,12 @@ export async function invitePlayer(request: FastifyRequest<{ Params: GameParams,
     reply.code(200).send({ message: 'INVITE_REQUESTED' });
 }
 
-export async function onlineGameWebsocket(socket: WebSocket, request: FastifyRequest<{ Params: GameParams }>) {
-    const decodedToken: { userId: string} = await request.jwtDecode();
+export async function onlineGameWebsocket(socket: WebSocket, request: FastifyRequest<{ Params: GameWebsocketParams }>) {
+    const decodedToken: { userId: string } | null = app.jwt.decode(request.params.token);
+    if (!decodedToken) {
+        socket.close();
+        return;
+    }
 
     socket.on('open', () => inGameCache.set(decodedToken.userId, socket));
 
@@ -139,6 +162,46 @@ export async function onlineGameWebsocket(socket: WebSocket, request: FastifyReq
             case 'ACCEPT_DRAW': {
                 await acceptDrawRequest(game, decodedToken.userId);
                 break
+            }
+        }
+    });
+}
+
+export async function botGameWebSocket(socket: WebSocket, request: GameWebsocketPayload) {
+    const decodedToken: { userId: string } | null = app.jwt.decode(request.query.token);
+    if (!decodedToken) {
+        socket.close();
+        return;
+    }
+
+    socket.on('open', () => inGameCache.set(decodedToken.userId, socket));
+
+    socket.on('message', async message => {
+        let parsedMessage: BotGameWebsocketMessage;
+
+        try {
+            parsedMessage = JSON.parse(message.toString());
+        } catch (error) {
+            socket.send(JSON.stringify({ error: 'PARSING_ERROR' }));
+            socket.close();
+            return;
+        }
+
+        const game = getGameFromSocket(socket, gamesCache.get(request.params.gameId), decodedToken.userId);
+        if (!game) {
+            socket.close();
+            return;
+        }
+
+        switch (parsedMessage.action) {
+            case 'MOVE': {
+                await makeMove(socket, game, parsedMessage, decodedToken.userId);
+                break;
+            }
+            
+            case 'ACCEPT_DRAW': {
+                await acceptDrawRequest(game, decodedToken.userId);
+                break;
             }
         }
     })

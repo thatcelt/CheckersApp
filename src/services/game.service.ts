@@ -6,6 +6,7 @@ import { Piece } from '../utils/getCaptures';
 import prisma from '../utils/prisma';
 import { FastifyReply } from 'fastify';
 import { Game } from '../utils/game';
+import { Bot } from '../utils/bot';
 import { v4 as uuidv4 } from 'uuid';
 
 
@@ -71,7 +72,7 @@ export async function makeMove(socket: WebSocket, game: CachedGame, websocketMes
 
     gameSendMessages(game.players, JSON.stringify({
         board: game.game.board,
-        moves: game.game.getAllValidMoves(game.game.currentTurn == Turn.Black ? Piece.BLACK_PIECE : Piece.WHITE_PIECE),
+        possibleMoves: game.game.getAllValidMoves(game.game.currentTurn == Turn.Black ? Piece.BLACK_PIECE : Piece.WHITE_PIECE),
         winner: game.winner,
         reason: game.reason
     }));
@@ -81,6 +82,27 @@ export async function makeMove(socket: WebSocket, game: CachedGame, websocketMes
     if (checkedWinner) {
         const playerPlace = playerPlaces.get(checkedWinner);
         if (playerPlace) await setGameResults(game.gameId, game.players, game.players[playerPlace], false);
+    }
+}
+
+export async function makeMoveWithBot(socket: WebSocket, game: CachedGame, websocketMessage: OnlineGameWebsocketMessage, userId: string) {
+    if (game.game.currentTurn != Turn.Black)
+        return;
+
+    while (game.game.currentTurn == Turn.Black) {
+        const moves = await (async () => {})();
+
+        // @ts-ignore
+        if (moves) {
+            socket.send(JSON.stringify({
+                move: [[0, 0], [0, 0]],
+                moverId: 'bot'
+            }));
+
+            // @ts-ignore
+            game.game.movePiece(0, 0);
+            game.game.currentTurn = game.game.currentTurn == Turn.Black ? Turn.White : Turn.Black;
+        }
     }
 }
 
