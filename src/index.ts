@@ -13,7 +13,11 @@ import fastifyCors from '@fastify/cors';
 
 config();
 
-app.register(websocket);
+app.register(websocket, {
+    options: {
+        clientTracking: true
+    }
+});
 
 app.register(fastifyJwt, {
     secret: process.env.SECRET as string,

@@ -14,7 +14,7 @@ export async function addFriend(request: FastifyRequest<{ Params: FriendParams }
         }
     }); 
 
-    reply.status(200).send({ message: "FRIEND_ADDED" });
+    return reply.status(200).send({ message: "FRIEND_ADDED" });
 }
 
 export async function removeFriend(request: FastifyRequest<{ Params: FriendParams }>, reply: FastifyReply) {
@@ -29,9 +29,9 @@ export async function removeFriend(request: FastifyRequest<{ Params: FriendParam
                 }
             }
         });
-        reply.status(200).send({ message: "FRIEND_REMOVED" });
+        return reply.status(200).send({ message: "FRIEND_REMOVED" });
     } catch (error: any) {
-        reply.status(400).send({ message: error });
+        return reply.status(400).send({ message: error });
     }
 }
 
@@ -58,6 +58,6 @@ export async function getFriends(request: FastifyRequest<{ Params: GetFriendRequ
         friends.filter(friend => !usersCache.has(friend.userId))
     }
 
-    reply.status(200).send({ message: "FRIENDS_COLLECTED", friends: friends });
+    return reply.status(200).send({ message: "FRIENDS_COLLECTED", friends: friends });
 }
 

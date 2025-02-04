@@ -3,7 +3,7 @@ import { verifyTelegramWebAppData } from '../utils/checker';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { EditProfileRequestPayload, changeSettingsRequestPayload, GetUserParams, TelegramUser, OnlineWebsocketPayload } from './types';
 import { WebSocket } from '@fastify/websocket';
-import { usersCache } from '../constants';
+import { inGameCache, usersCache } from '../constants';
 import app from '../utils/app';
 
 export async function getUser(req: FastifyRequest<{Params: GetUserParams}>, reply: FastifyReply) {
@@ -12,7 +12,7 @@ export async function getUser(req: FastifyRequest<{Params: GetUserParams}>, repl
     let gameHistory = {}
     
     if (!user)
-        reply.status(400).send({ message: 'USER_NOT_FOUND' });
+        return reply.status(400).send({ message: 'USER_NOT_FOUND' });
 
     if (decodedToken.userId == req.params.id) {
         gameHistory = await prisma.playedGame.findMany({
@@ -21,7 +21,7 @@ export async function getUser(req: FastifyRequest<{Params: GetUserParams}>, repl
             }
         })
     }
-    reply.status(200).send({ message: 'COLLECTED', user: user, gameHistory: gameHistory });
+    return reply.status(200).send({ message: 'COLLECTED', user: user, gameHistory: gameHistory });
 }
 
 export async function editProfile(req: EditProfileRequestPayload, reply: FastifyReply) {
@@ -37,9 +37,9 @@ export async function editProfile(req: EditProfileRequestPayload, reply: Fastify
             }
         });
 
-        reply.status(200).send({ message: 'EDITED' });
+        return reply.status(200).send({ message: 'EDITED' });
     } catch (error: any) {
-        reply.status(400).send({ message: error });
+        return reply.status(400).send({ message: error });
     }
 }
 
@@ -64,9 +64,9 @@ export async function authorize(request: FastifyRequest, reply: FastifyReply) {
         }
 
         const token = await reply.jwtSign(user); 
-        reply.status(200).send({ message: 'USER_AUTHORIZED', user: user, accessToken: token });
+        return reply.status(200).send({ message: 'USER_AUTHORIZED', user: user, accessToken: token });
     } else {
-        reply.code(400).send({ message: "INVALID_WEB_APP_INIT_DATA" });
+        return reply.code(400).send({ message: "INVALID_WEB_APP_INIT_DATA" });
     }
 }
 
@@ -83,9 +83,9 @@ export async function changeSettings(request: changeSettingsRequestPayload, repl
             }
         });
 
-        reply.status(200).send({ message: 'EDITED' });
+        return reply.status(200).send({ message: 'EDITED' });
     } catch (error) {
-        reply.status(400).send({ message: error });
+        return reply.status(400).send({ message: error });
     }
 }
 
@@ -98,25 +98,35 @@ export async function getGameHistory(request: FastifyRequest, reply: FastifyRepl
             }
         });
 
-        reply.status(200).send({ message: 'COLLECTED', games: playedGames });
+        return reply.status(200).send({ message: 'COLLECTED', games: playedGames });
     } catch (error) {
-        reply.status(400).send({ message: error });
+        return reply.status(400).send({ message: error });
     }
     
 }
 
 export async function getRating(request: FastifyRequest, reply: FastifyReply) {
     try {
+        const decodedToken: { userId: string } = await request.jwtDecode()
         const users = await prisma.user.findMany({
             orderBy: {
                 scores: 'desc'
             },
             take: 100
         });
+        
+        const fullTopUsers = await prisma.user.findMany({
+            orderBy: {
+                scores: 'desc'
+            }
+        });
 
-        reply.status(200).send({ message: 'COLLECTED', users: users });
+        console.log(fullTopUsers, fullTopUsers.find(user => user.userId == decodedToken.userId))
+
+        const user = fullTopUsers.find(user => user.userId == decodedToken.userId)
+        return reply.status(200).send({ message: 'COLLECTED', users: users, user: {userData: user, index: fullTopUsers.indexOf(user!) + 1}});
     } catch (error) {
-        reply.status(400).send({ message: error });
+        return reply.status(400).send({ message: error });
     }
 }
 
@@ -127,12 +137,31 @@ export async function onlineWebsocketConnect(socket: WebSocket, request: OnlineW
         socket.close();
         return;
     }
-    
-    socket.on('open', () => {  
-        usersCache.set(decodedToken.userId, socket);
-    })
+    usersCache.set(decodedToken.userId, socket);
+
+    let lastPingTime = Date.now();
+
+    const checkHeartbeat = () => {
+        if (Date.now() - lastPingTime > 60000) { 
+            socket.close();
+        }
+    };
+
+    const heartbeatInterval = setInterval(checkHeartbeat, 30000);
+
+    socket.on('message', (data) => {
+        const message = JSON.parse(data.toString());
+
+        if (message.type === 'ping') {
+            lastPingTime = Date.now();
+            socket.send(JSON.stringify({ type: 'pong' }));
+        }
+    });
 
     socket.on('close', () => {
+        clearInterval(heartbeatInterval);
         usersCache.delete(decodedToken.userId);
-    })
+        const gameSocket = inGameCache.get(decodedToken.userId);
+        if (gameSocket) gameSocket.close();
+    });
 }

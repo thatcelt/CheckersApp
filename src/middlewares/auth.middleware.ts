@@ -6,7 +6,7 @@ const authMiddlewarePlugin = (fastify: FastifyInstance, _opts: Record<never, nev
         try {
             await request.jwtVerify();
         } catch (error: any) {
-            reply.status(401).send({ message: error.code });
+            return reply.status(401).send({ message: error.code });
         }
     });
 

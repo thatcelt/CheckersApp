@@ -6,7 +6,7 @@ import { changeSettingsSchema, editProfileSchema, authorizeUserSchema, getUserSc
 export const userRoutes = (app: FastifyInstance) => {
     app.get<{ Params: GetUserParams}>('/getUser/:id', { preHandler: [app.authenticate], schema: getUserSchema }, getUser); 
     app.get('/getRatings', { preHandler: [app.authenticate] }, getRating);
-    app.get<{ Params: OnlineWebsocketParams, Querystring: WebsocketQuery }>('/online', { websocket: true }, onlineWebsocketConnect)
+    app.get<{ Querystring: WebsocketQuery }>('/online', { websocket: true }, onlineWebsocketConnect)
     app.post('/authorize', { schema: authorizeUserSchema }, authorize);
     app.patch<{ Body: EditProfileRequestBody}>('/edit', { preHandler: [app.authenticate], schema: editProfileSchema }, editProfile);
     app.patch<{ Querystring: ChangeSettingsRequestQuery }>('/changeSettings', { preHandler: [app.authenticate], schema: changeSettingsSchema }, changeSettings);

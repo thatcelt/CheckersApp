@@ -1,10 +1,12 @@
 import { Game } from './utils/game';
+import { Bot } from './utils/bot';
 import { WebSocket } from '@fastify/websocket';
 
 export type CachedGame = {
     gameId: string,
     players: string[],
     game: Game,
+    bot?: Bot,
     winner?: string,
     reason?: string,
     drawTime: number,
@@ -45,6 +47,10 @@ export const emptyBoard = [
 export enum Piece { EMPTY = 0, WHITE_PIECE = 1, BLACK_PIECE = 2, WHITE_KING = 3, BLACK_KING = 4, SELECT = 9 };
 export enum Turn { White = 1, Black = 2 };
 export enum GameTypes { PRIVATE = 'private', PUBLIC = 'public' };
+export enum DifficultyTypes { EASY = 'easy', MEDIUM = 'medium', HARD = 'hard' };
+export type Position = [number, number];
+export type Move = [Position, Position];
+export const BOARD_SIZE = 8;
 
 playerPlaces.set('White', 0);
 playerPlaces.set('Black', 1);

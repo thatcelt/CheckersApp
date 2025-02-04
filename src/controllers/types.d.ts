@@ -1,5 +1,5 @@
 import { FastifyRequest } from 'fastify';
-import { GameTypes, Turn } from '../constants';
+import { GameTypes, DifficultyTypes, Turn } from '../constants';
 import { Position } from '../utils/getCaptures';
 
 export interface EditProfileRequestBody {
@@ -33,6 +33,13 @@ export interface CreateGameRequestPayload extends FastifyRequest {
     body: CreateGameRequestBody
 }
 
+export interface CreateGameWithBotRequestBody {
+    difficulty: DifficultyTypes
+}
+export interface CreateGameWithBotRequestPayload  extends FastifyRequest {
+    body: CreateGameWithBotRequestBody
+}
+
 export type GameParams = { gameId: string }
 export type GameWebsocketParams = { gameId: string, token: string }
 export type OnlineWebsocketParams = { gameId: string, token: string }
@@ -41,13 +48,17 @@ export interface WebsocketQuery {
     token: string
 }
 
+export interface GameWebsocketQuery {
+    token: string;
+    gameId: string;
+}
+
 export interface OnlineWebsocketPayload extends FastifyRequest {
     query: WebsocketQuery
 }
 
 export interface GameWebsocketPayload extends FastifyRequest {
-    query: WebsocketQuery,
-    params: GameWebsocketParams
+    query: GameWebsocketQuery,
 }
 
 
