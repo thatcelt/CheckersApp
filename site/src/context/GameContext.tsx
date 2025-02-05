@@ -64,7 +64,6 @@ const GameProvider: FC<{ children: ReactNode }> = ({ children }) => {
     };
    
     function handleMessage(gameContext: GameContextType, message: any) {
-        console.log('anuscheck', gameContext, message)
         if (message.winner) {
             modalController.createModal({
                 title: `${getLocalizedString(authContext, 'resultsTitle')}: ${getLocalizedString(authContext, message.winner as keyof LanguageTranslations)}`,
@@ -103,7 +102,6 @@ const GameProvider: FC<{ children: ReactNode }> = ({ children }) => {
                 
                 queue.push(async () => {
                     const nextMoveAnswer: NextMoveStructure = message
-                    console.log(nextMoveAnswer.possibleMoves);
                     setMoves(nextMoveAnswer.possibleMoves);
                     gameContext.setCurrentTurn(nextMoveAnswer.currentTurn);
                     gameContext.setBoard(nextMoveAnswer.board);

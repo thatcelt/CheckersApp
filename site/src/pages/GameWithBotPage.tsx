@@ -79,8 +79,6 @@ const GameWithBot: FC = () => {
     
         if (timerIntervalRef.current)
             clearInterval(timerIntervalRef.current);
-
-        console.log('enableTimer')
         
         if (+gameContext.currentTurn == 1)
             enableTimer(gameContext.firstCounter, timerIntervalRef, gameContext.setFirstCounter, gameContext);

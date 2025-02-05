@@ -33,12 +33,10 @@ const Cell: FC<CellProps> = ({ cellId, cellColor, children }) => {
             fromCol = capture[1];
 
             if (gameContext.board[fromRow][fromCol] == Piece.WHITE_PIECE && fromRow == 0) {
-                console.log('замена на дамку белую')
                 gameContext.board[fromRow][fromCol] = Piece.WHITE_KING;
                 gameContext.setBoard([...gameContext.board]);
                 await new Promise(resolve => setTimeout(resolve, 500));
             } else if (gameContext.board[fromRow][fromCol] == Piece.BLACK_PIECE && fromCol == BOARD_SIZE - 1) {
-                console.log('замена на дамку черную')
                 gameContext.board[fromRow][fromCol] = Piece.BLACK_KING;
                 gameContext.setBoard([...gameContext.board]);
                 await new Promise(resolve => setTimeout(resolve, 500));

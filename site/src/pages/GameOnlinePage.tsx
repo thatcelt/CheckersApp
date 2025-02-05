@@ -101,7 +101,6 @@ const GameOnline: FC = () => {
                 clearInterval(timerIntervalRef.current);
                 timerIntervalRef.current = undefined;
             }
-            console.log('wow')
         }
     }, [gameContext.gameId]);
 
@@ -115,8 +114,6 @@ const GameOnline: FC = () => {
     
         if (timerIntervalRef.current)
             clearInterval(timerIntervalRef.current);
-
-        console.log('enableTimer')
         
         if (+gameContext.currentTurn == 1)
             enableTimer(gameContext.firstCounter, timerIntervalRef, gameContext.setFirstCounter, gameContext);

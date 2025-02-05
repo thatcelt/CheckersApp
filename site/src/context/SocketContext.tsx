@@ -16,7 +16,6 @@ const SocketProvider: FC<{ children: ReactNode }> = ({ children }) => {
         if (!webSocketURI || webSocketURI == null || ws.current) 
             return;
 
-        console.log('create new websockit', webSocketURI )  
         ws.current = new WebSocket(webSocketURI!);
 
         ws.current.onopen = () => {
