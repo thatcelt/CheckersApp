@@ -121,8 +121,6 @@ export async function getRating(request: FastifyRequest, reply: FastifyReply) {
             }
         });
 
-        console.log(fullTopUsers, fullTopUsers.find(user => user.userId == decodedToken.userId))
-
         const user = fullTopUsers.find(user => user.userId == decodedToken.userId)
         return reply.status(200).send({ message: 'COLLECTED', users: users, user: {userData: user, index: fullTopUsers.indexOf(user!) + 1}});
     } catch (error) {

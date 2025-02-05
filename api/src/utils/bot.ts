@@ -12,7 +12,6 @@ class Bot {
 
     getMove(game: Game): Position[] | null {
         let moves: Position[] | null = null;
-        console.log(this.difficulty);
         switch (this.difficulty) {
             case DifficultyTypes.EASY:
                 moves = this.getRandomMove(game);

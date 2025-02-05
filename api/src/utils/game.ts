@@ -56,7 +56,6 @@ class Game {
 
         if (Math.abs(from[0] - to[0]) >= 2) {
             const furtherCaptures = this.getValidMoves(to[0], to[1], true);
-            console.log(this.board[to[0]][to[1]]);
             if (furtherCaptures.length > 0) {
                 this.capturingPiece = [to[0], to[1]];
                 this.mustCapture = true;

@@ -78,7 +78,6 @@ export async function joinGame(request: FastifyRequest<{ Params: GameParams }>, 
 
 export async function searchGame(request: FastifyRequest, reply: FastifyReply) {
     const decodedToken: { userId: string} = await request.jwtDecode();
-    console.log("Перед поиском", inGameCache, gamesCache)
     if (inGameCache.has(decodedToken.userId)) return reply.status(400).send({message: 'YOU_ALREADY_IN_GAME'});
     const userData = await prisma.user.findUniqueOrThrow({
         where: {
@@ -161,10 +160,7 @@ export async function onlineGameWebsocket(socket: WebSocket, request: GameWebsoc
             await surrenderGame(game, decodedToken.userId)
     });
 
-    socket.on('error', (err) => console.log('lol error', err))
-
     socket.on('message', async message => {
-        console.log('При отправке сообщения', gamesCache)
         let parsedMessage: OnlineGameWebsocketMessage;
 
         try {
