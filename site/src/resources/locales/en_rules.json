@@ -1,0 +1,29 @@
+{
+    "title": "Rules of the Game",
+    "content": [
+        {
+          "title": "Goal of the Game",
+          "description": "Players aim to capture all opponent’s pieces or create a situation where the opponent cannot make a move."
+        },
+        {
+          "title": "Game Board",
+          "description": "The game is played on an 8x8 checkered board. Only dark squares are used. Each player has 12 pieces placed on the three bottom rows of dark squares."
+        },
+        {
+          "title": "Rules of Movement",
+          "description": "Regular Pieces (Pawn): Move diagonally forward one square. Can jump over opponent’s pieces if there is an empty square behind them (this move is called a 'capture'). Kings: Upon reaching the last row, a regular piece is promoted to a 'king'. A king can move diagonally any number of squares in any direction."
+        },
+        {
+          "title": "Capturing Pieces (Capture)",
+          "description": "If an opponent’s piece is adjacent to one of yours and there is an empty square behind it, you must 'capture' it by jumping over it. Multiple jumps are allowed in one turn if possible (a chain capture). If there are multiple capture options, the player may choose any. Skipping a mandatory capture is prohibited and considered a violation of the rules."
+        },
+        {
+          "title": "Promotion to a King",
+          "description": "When a regular piece reaches the opponent’s last row, it is promoted to a king. A king is marked by stacking another piece on top."
+        },
+        {
+          "title": "End of the Game",
+          "description": "The game ends when: One player loses all their pieces. One player cannot make a move. The game can end in a draw by agreement or if no victory is achievable (e.g., only kings remain that cannot capture each other)."
+        }
+    ]
+}

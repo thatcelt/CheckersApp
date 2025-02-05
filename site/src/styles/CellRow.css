@@ -1,0 +1,6 @@
+.cells-row {
+    display: flex;
+    flex: 1;
+    gap: 4px;
+    margin-bottom: 4px;
+}

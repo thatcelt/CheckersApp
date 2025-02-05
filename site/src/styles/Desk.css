@@ -1,0 +1,41 @@
+.desk-container {
+    width: 100%;
+    max-width: 400px;
+    aspect-ratio: 1 / 1;
+    max-height: 400px;
+    background-image: url(../src/resources/assets/board_2.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+    box-shadow: 0 0 60px #F7F7F7;
+    transition: 0.2s all ease-in-out;
+    position: relative;
+    z-index: 0;
+}
+
+.desk-space {
+    padding: 12px;
+}
+
+@media (max-width: 600px) {
+    .desk-container {
+        max-width: calc(100vw - 100px);
+        height: calc(100vw - 100px);
+    }
+}
+
+@media (max-width: 400px) {
+    .desk-container {
+        max-width: calc(100vw - 40px);
+        height: calc(100vw - 40px);
+    }
+}
+
+@media (max-width: 320px) {
+    .desk-container {
+        max-width: calc(100vw - 10px);
+        height: calc(100vw - 10px);
+    }
+}

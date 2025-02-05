@@ -1,0 +1,84 @@
+.panel-container {
+    position: absolute;
+    bottom: 2%;
+    padding: 10px;
+    width: 370px;
+    height: 51px;
+    border-radius: 16px;
+    background: #FFF;
+    color: #999999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    font-size: 10px;
+    box-shadow: 1px 1px 3px 0px rgba(0, 0, 0, 0.20), 1px 1px 10px 0px rgba(0, 0, 0, 0.20), -2px -2px 12px 0px rgba(255, 255, 255, 0.30) inset, -2px -2px 4px 0px rgba(255, 255, 255, 0.30) inset;
+}
+
+.panel-container::after {
+    font-size: 9px;
+}
+
+.variant {
+    width: 55px;
+    display: flex;
+    font-size: 8px;
+    flex-direction: column;
+    align-items: center;
+    padding: 0px 5px 0px 5px;
+}
+
+.variant > img {
+    height: 43px;
+}
+
+.variant > span {
+    margin-bottom: 5px;
+}
+
+.variant-play {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 5px;
+    border-radius: 20px;
+}
+
+.rectangle {
+    width: 100px;
+    background: #FFF;
+    border-radius: 20px;
+    margin-bottom: 40px;
+    border: 1px solid #FFF;
+    box-shadow: 1px 1px 3px 0px rgba(0, 0, 0, 0.20), 1px 1px 10px 0px rgba(0, 0, 0, 0.20), -2px -2px 12px 0px rgba(255, 255, 255, 0.30) inset, -2px -2px 4px 0px rgba(255, 255, 255, 0.30) inset;
+}
+
+.variant-play > img {
+    width: 55px;
+}
+
+.soon-games-description {
+    text-align: center;
+    padding-left: 10px;
+    padding-right: 10px;
+    background-color: #FFF1D7;
+    flex-shrink: 0;
+    color: #FBAC18;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    margin-bottom: 23px;
+}
+
+.soon-games-button {
+    width: 117px;
+    height: 34px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #FFB835;
+    background: rgba(255, 255, 255, 0.30);
+    box-shadow: -1px -1px 2px 0px rgba(255, 255, 255, 0.40), -2px -2px 14px 0px rgba(255, 255, 255, 0.30), 1px 1px 2px 0px rgba(0, 0, 0, 0.10), 1px 1px 3px 0px rgba(0, 0, 0, 0.20), 1px -1px 2px 0px rgba(255, 255, 255, 0.30) inset;
+}

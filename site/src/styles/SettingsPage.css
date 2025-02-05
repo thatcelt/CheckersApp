@@ -1,0 +1,157 @@
+.settings-buttons-container {
+    margin-top: calc(var(--tg-safe-area-inset-top) + var(--tg-content-safe-area-inset-top));
+    margin-left: 30px;
+}
+
+.back-button {
+    margin-top: 10px;
+    width: 73px;
+    height: 28px;
+    border-radius: 6px;
+    background: #F7F7F7;
+    font-family: MontserratBold;
+    display: flex;
+    align-items: center;
+    box-shadow: -2px -2px 12px 0px rgba(255, 255, 255, 0.30) inset, -2px -2px 4px 0px rgba(255, 255, 255, 0.30) inset, 1px 1px 3px 0px rgba(0, 0, 0, 0.20), 1px 1px 10px 0px rgba(0, 0, 0, 0.20);
+}
+
+.animated {
+    opacity: 0;
+    transform: scale(0.9);
+    animation: fadeInScale 0.4s ease-out forwards;
+}
+
+@keyframes fadeInScale {
+    0% {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.back-button > img {
+    width: 6px;
+    height: 10px;
+    margin-left: 9px;
+    margin-right: 5px;
+}
+
+.back-button > span {
+    line-height: -4.31;
+    font-size: 14px;
+    margin-top: 0.6px;
+}
+
+.edit-profile-button {
+    margin-top: 65px;
+    margin-left: auto;
+    margin-right: 10px;
+    width: 21px;
+    height: 21px;
+    border-radius: 40px;
+    border: 0.5px solid #BDBDBD;
+    background: #898989;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 1px -1px 3px 0px rgba(255, 255, 255, 0.15) inset, -1px -1px 2px 0px rgba(255, 255, 255, 0.20), -1px -1px 6px 0px rgba(255, 255, 255, 0.15), 1px 1px 2px 0px rgba(0, 0, 0, 0.10), 1px 1px 3px 0px rgba(0, 0, 0, 0.20);
+}
+
+.edit-profile-button > img {
+    width: 12px;
+    height: 12px;
+}
+
+.settings-container {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.settings-block {
+    box-shadow: 0px 2px 4px 10px rgba(0, 0, 0, 0.25);
+    width: 373px;
+    border-radius: 14px;
+    border: 1px solid #FFB835;
+    background-color: #FFF;
+    margin-top: 30px;
+    outline: 8px solid #FFF;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.settings-block > span {
+    margin-top: 10px;
+    font-family: MontserratBold;
+    font-size: 20px;
+}
+
+.settings-cards-list {
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.settings-card {
+    width: 355px;
+    height: 32px;
+    background-color: #E6E6E6;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 15px;
+    transition: background 0.2s;
+}
+
+.settings-card-image {
+    display: flex;
+}
+
+.settings-text-area {
+    margin-left: 10px;
+    width: 329px;
+    margin-right: 34px;
+    font-size: 14px;
+    font-family: MontserratSemiBold;
+}
+
+.setting-card-end {
+    font-family: "MontserratSemiBold";
+    display: flex;
+    font-size: 14px;
+    align-items: center;
+    justify-content: center;
+}
+
+.settings-card-img {
+    width: 6px;
+    height: 10px;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+.settings-card > img {
+    width: 6px;
+    height: 10px;
+    margin-right: 10px;
+}
+
+.shining {
+    position: absolute;
+    z-index: -1;
+    width: 100%;
+    bottom: 45%;
+    height: 300px;
+    overflow: auto;
+    background-color: rgb(255, 255, 255,0.9);
+    filter: blur(25px);
+    box-shadow: 10px 10px 111px 48px rgb(255, 255, 255);
+}

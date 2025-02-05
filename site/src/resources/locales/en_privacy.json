@@ -1,0 +1,38 @@
+{
+    "title": "Privacy Policy",
+    "content": [
+      {
+        "title": "1. Developer Name and Contact Information",
+        "description": "Happy Games. Email: happygamesbot@gmail.com"
+      },
+      {
+        "title": "2. Types of Collected Data",
+        "description": "We collect and process the following information provided by users through their Telegram accounts: • Username • Display name • Avatar (if set) • Phone number (if provided by the user) • Data on in-game actions and progress (e.g., achievements) • Information on user interaction with the game (e.g., time spent in the game, login frequency)"
+      },
+      {
+        "title": "3. Purpose of Data Collection",
+        "description": "Collected data is used for the following purposes: • User registration and identification in the game • Improving the quality of the gaming experience • Sending notifications and updates related to the game • Analyzing in-game actions to enhance gameplay and user experience • Providing technical support and responding to user inquiries"
+      },
+      {
+        "title": "4. Data Sharing with Third Parties",
+        "description": "We share personal data with third parties only based on voluntary actions by the users, such as participating in tasks requiring subscriptions to our partners' social networks."
+      },
+      {
+        "title": "5. Data Security",
+        "description": "We take all necessary measures to protect user data, including AES-256 encryption standards, ensuring a high level of security and confidentiality. Access to personal data is only granted to authorized employees who need this information to perform their duties."
+      },
+      {
+        "title": "6. Data Retention Period",
+        "description": "User data is stored for the time necessary to achieve the purposes outlined in this privacy policy or as required by law. If a user wishes to delete their account, the data will be deleted within a reasonable timeframe."
+      },
+      {
+        "title": "7. User Rights",
+        "description": "Users have the right to access, correct, delete, and restrict the processing of their data. To exercise these rights, please contact us at: happygamesbot@gmail.com."
+      },
+      {
+        "title": "8. Changes to the Privacy Policy",
+        "description": "We reserve the right to make changes to this privacy policy. We will notify users of any changes through the Happy Games app. We recommend periodically reviewing the privacy policy to stay informed about updates."
+      }
+    ]
+  }
+  

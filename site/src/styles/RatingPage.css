@@ -1,0 +1,173 @@
+
+.rating-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: calc(var(--tg-safe-area-inset-top) + var(--tg-content-safe-area-inset-top));
+}
+
+.animated {
+    opacity: 0;
+    transform: scale(0);
+    animation: fadeInScale 0.3s ease-out forwards;
+}
+
+@keyframes fadeInScale {
+    0% {
+        opacity: 0;
+        transform: scale(0);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.adjusted {
+    font-size: 14px !important;
+}
+
+.scores-card-container {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.scores-card {
+    margin-top: 16px;
+    width: 350px;
+    height: 104px;
+    border-radius: 20px;
+    border: 2px solid rgba(185, 185, 185, 0.90);
+    background: #A4A4A4;
+    outline: 8px solid #A4A4A4;
+    display: flex;
+    align-items: center;
+    transition: transform 0.2s ease-in-out;
+}
+
+.scores-avatar {
+    margin-left: 18px;
+    width: 82px;
+    height: 82px;
+    border-radius: 8px;
+    margin-right: 26px;
+}
+
+.scores-info {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+.scores-info-nickname {
+    color: #FFF;
+    font-family: DarkerGrotesqueExtraBold, MontserratExtraBold;
+    font-size: 18px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.10);
+    margin-bottom: 10px;
+}
+
+.scores-count {
+    width: 101px;
+    height: 22px;
+    border-radius: 5px;
+    font-size: 16px;
+    background: #C1C1C1;
+    display: flex;
+    align-items: center;
+    color: #FFF;
+}
+
+.scores-count > img {
+    width: 17px;
+    margin-top: 1px;
+    height: 16px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.my-scores-count-container {
+    display: inline;
+    line-height: 15px;
+} 
+
+.my-scores-count-container > span {
+    font-family: MontserratBold;
+    vertical-align: text-bottom;
+}
+
+.rating-list-container {
+    margin-top: 24px;
+}
+
+.rating-list-container > span {
+    font-size: 24px;
+}
+
+.rating-parameters-buttons {
+    margin-top: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 16px;
+}
+
+.rating-parameter-button {
+    width: 110px;
+    height: 26px;
+    border-radius: 12px;
+    text-align: center;
+    font-family: DarkerGrotesqueBold;
+    border: 1px solid #FFB835;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: -1px -1px 2px 0px rgba(255, 255, 255, 0.40), -2px -2px 14px 0px rgba(255, 255, 255, 0.30), 1px 1px 2px 0px rgba(0, 0, 0, 0.10), 1px 1px 3px 0px rgba(0, 0, 0, 0.20), 1px -1px 2px 0px rgba(255, 255, 255, 0.30) inset;
+    transition: all 0.2 ease-in-out;
+}
+
+.rating-parameter-button > span {
+    line-height: 20px;
+}
+
+.rating-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto;
+    padding-bottom: 300px;
+    height: calc(100vh - 500px);
+    padding-left: 15px;
+    padding-right: 15px;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+.rating-list::-webkit-scrollbar {
+    width: 0px;
+}
+
+
+
+.darkering {
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
+    bottom: 0%;
+    position: absolute;
+    width: 100%;
+    height: 25%;
+}
+
+.rating-shining {
+    position: absolute;
+    z-index: -1;
+    width: 100%;
+    bottom: 72%;
+    height: 50px;
+    overflow: auto;
+    background-color: rgb(255, 255, 255,0.6);
+    filter: blur(25px);
+    box-shadow: 10px 10px 111px 48px rgb(255, 255, 255);
+}
