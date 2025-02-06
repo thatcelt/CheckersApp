@@ -207,7 +207,7 @@ export async function invitePlayerRequest(reply: FastifyReply, game: CachedGame,
             }
         });
 
-        if (!inGameCache.get(playerId))
+        if (inGameCache.get(playerId))
             return reply.code(400).send({ message: 'FRIEND_ALREADY_IN_GAME' });
 
         const onlineSocket = usersCache.get(playerId)
@@ -219,7 +219,62 @@ export async function invitePlayerRequest(reply: FastifyReply, game: CachedGame,
             gameId: game.gameId,
             inviterId: inviterId
         }));
-        
+    } catch (error) {
+        return reply.code(403).send({ message: 'FORBIDDEN' });
+    }
+}
+
+export async function acceptInviteRequest(reply: FastifyReply, game: CachedGame, userId: string) {
+    try {
+        await prisma.friendship.findFirstOrThrow({
+            where: {
+                OR: [
+                    { friendId: game.players[0], userId: userId },
+                    { friendId: userId, userId: game.players[0] }
+                ]
+            }
+        });
+
+        if (game.players.length == 2)
+            return reply.code(400).send({ message: 'FRIEND_ALREADY_IN_GAME' });
+
+        const onlineSocket = usersCache.get(game.players[0])
+        if (!onlineSocket)
+            return reply.code(400).send({ message: 'FRIEND_IS_OFFLINE' })
+
+        onlineSocket?.send(JSON.stringify({
+            t: 'INVITE_ACCEPTED',
+            gameId: game.gameId,
+            inviterId: game.players[0]
+        }));
+    } catch (error) {
+        return reply.code(403).send({ message: 'FORBIDDEN' });
+    }
+}
+
+export async function rejectInviteRequest(reply: FastifyReply, game: CachedGame, userId: string) {
+    try {
+        await prisma.friendship.findFirstOrThrow({
+            where: {
+                OR: [
+                    { friendId: game.players[0], userId: userId },
+                    { friendId: userId, userId: game.players[0] }
+                ]
+            }
+        });
+
+        if (game.players.length == 2)
+            return reply.code(400).send({ message: 'FRIEND_ALREADY_IN_GAME' });
+
+        const onlineSocket = usersCache.get(game.players[0])
+        if (!onlineSocket)
+            return reply.code(400).send({ message: 'FRIEND_IS_OFFLINE' })
+
+        onlineSocket?.send(JSON.stringify({
+            t: 'INVITE_REJECTED',
+            gameId: game.gameId,
+            inviterId: game.players[0]
+        }));
     } catch (error) {
         return reply.code(403).send({ message: 'FORBIDDEN' });
     }

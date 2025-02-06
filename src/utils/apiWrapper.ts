@@ -309,6 +309,38 @@ export async function invitePlayer(userId: string, gameId: string) {
     }
 }
 
+export async function acceptInvite(gameId: string) {
+    const response = await fetch(`https://${API_URL}/api/v1/game/acceptInvite/${gameId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token
+        }
+    })
+    if (response.ok) {
+        return await response.json()
+    } else {
+        const errorData = await response.json();
+        console.log(`Exception ${errorData.detail}`);
+    }
+}
+
+export async function rejectInvite(gameId: string) {
+    const response = await fetch(`https://${API_URL}/api/v1/game/rejectInvite/${gameId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token
+        }
+    })
+    if (response.ok) {
+        return await response.json()
+    } else {
+        const errorData = await response.json();
+        console.log(`Exception ${errorData.detail}`);
+    }
+}
+
 // friends routers
 
 export async function getFriends(state: string) {

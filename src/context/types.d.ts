@@ -62,6 +62,8 @@ export interface ModalConfig {
     type?: string;
     title: string;
     message: string;
+    hideButtons?: boolean;
+    body?: ReactNode;
     button1?: string;
     button2?: string | undefined;
     button3?: string | undefined;

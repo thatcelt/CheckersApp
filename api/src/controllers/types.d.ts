@@ -85,3 +85,22 @@ export type TelegramUser = {
 }
 
 export type GetFriendRequestParams = { state: string }
+
+export type User = {
+    userId: string;
+    username: string;
+    language: string;
+    profilePicture: string;
+    registrationDate: string;
+    scores: number;
+    possibleMoves: boolean;
+    vibrationOnTap: boolean;
+    friends: any[];
+    friendOf: any[];
+    playedGames: any[];
+}
+
+export type Friendship = {
+    user: User;
+    friend: User;
+}

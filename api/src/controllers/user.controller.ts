@@ -1,7 +1,7 @@
 import prisma from '../utils/prisma';
 import { verifyTelegramWebAppData } from '../utils/checker';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { EditProfileRequestPayload, changeSettingsRequestPayload, GetUserParams, TelegramUser, OnlineWebsocketPayload } from './types';
+import { EditProfileRequestPayload, changeSettingsRequestPayload, GetUserParams, TelegramUser, OnlineWebsocketPayload, User } from './types';
 import { WebSocket } from '@fastify/websocket';
 import { inGameCache, usersCache } from '../constants';
 import app from '../utils/app';

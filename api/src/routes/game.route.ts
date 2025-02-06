@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify';
-import { createGame, drawRequest, invitePlayer, joinGame, onlineGameWebsocket, searchGame, surrender, botGameWebSocket, createGameWithBot, onOneDeviceGameWebSocket, createGameOnOneDevice } from '../controllers/game.controller';
+import { createGame, drawRequest, invitePlayer, joinGame, onlineGameWebsocket, searchGame, surrender, botGameWebSocket, createGameWithBot, onOneDeviceGameWebSocket, createGameOnOneDevice, acceptInvite, rejectInvite } from '../controllers/game.controller';
 import { CreateGameRequestBody, GameParams, GameWebsocketParams, InvitePlayerRequestBody, BotGameWebsocketParams, WebsocketQuery, CreateGameWithBotRequestBody } from '../controllers/types';
 
 export const gameRoutes = (app: FastifyInstance) => {
@@ -14,4 +14,6 @@ export const gameRoutes = (app: FastifyInstance) => {
     app.post<{ Params: GameParams }>('/surrender/:gameId', surrender);
     app.post<{ Params: GameParams }>('/drawRequest/:gameId', drawRequest);
     app.post<{ Params: GameParams, Body: InvitePlayerRequestBody }>('/invitePlayer/:gameId', invitePlayer);
+    app.post<{ Params: GameParams }>('/acceptInvite/:gameId', acceptInvite);
+    app.post<{ Params: GameParams }>('/rejectInvite/:gameId', rejectInvite);
 }

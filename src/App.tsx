@@ -8,16 +8,17 @@ import GameProvider from './context/GameContext.tsx'
 import PreLoadingPage from './pages/PreLoadingPage.tsx';
 import './styles/App.css';
 
-const Profile = lazy(() => import('./pages/ProfilePage.tsx'))
-const Games = lazy(() => import("./pages/GamesPage.tsx"))
-const Rating = lazy(() => import("./pages/RatingPage.tsx"))
-const SelectLevel = lazy(() => import("./pages/LevelSelectingPage.tsx"))
-const GameWithBot = lazy(() => import("./pages/GameWithBotPage.tsx"))
-const GameWithPlayer = lazy(() => import("./pages/GameOnlinePage.tsx"))
-const Settings = lazy(() => import('./pages/SettingsPage.tsx'))
-const Friends = lazy(() => import('./pages/FriendsPage.tsx'))
-const GameOnOneDevice = lazy(() => import('./pages/GameOnOneDevicePage.tsx'))
-const GamesSelecting = lazy(() => import('./pages/GameSelectingPage.tsx'))
+const Profile = lazy(() => import('./pages/ProfilePage.tsx'));
+const Games = lazy(() => import("./pages/GamesPage.tsx"));
+const Rating = lazy(() => import("./pages/RatingPage.tsx"));
+const SelectLevel = lazy(() => import("./pages/LevelSelectingPage.tsx"));
+const GameWithBot = lazy(() => import("./pages/GameWithBotPage.tsx"));
+const GameWithPlayer = lazy(() => import("./pages/GameOnlinePage.tsx"));
+const Settings = lazy(() => import('./pages/SettingsPage.tsx'));
+const Friends = lazy(() => import('./pages/FriendsPage.tsx'));
+const GameOnOneDevice = lazy(() => import('./pages/GameOnOneDevicePage.tsx'));
+const GamesSelecting = lazy(() => import('./pages/GameSelectingPage.tsx'));
+const GameWithInvited = lazy(() => import('./pages/GameWithInvitedPage.tsx'));
 
 const App: FC = () => {
 	return (
@@ -35,6 +36,7 @@ const App: FC = () => {
 											<Route path='/game-with-bot/:difficulty' element={<GameWithBot/>}/>
 											<Route path='/profile' element={<Profile/>}/>
 											<Route path='/play' element={<GameWithPlayer/>}/>
+											<Route path='/play-with-invited' element={<GameWithInvited/>}/>
 											<Route path='/settings' element={<Settings/>}/>
 											<Route path='/rating' element={<Rating/>}/>
 											<Route path='/friends' element={<Friends/>}/>

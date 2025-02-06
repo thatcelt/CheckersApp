@@ -8,7 +8,7 @@ import { WebSocket } from '@fastify/websocket';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { gameSendMessages, getGameFromRequest, getGameFromSocket } from '../utils/utils';
 import { drawTimeoutValue, emptyBoard, gamesCache, GameTypes, inGameCache, maxPlayers } from '../constants';
-import { acceptDrawRequest, drawGameRequest, invitePlayerRequest, makeMove, makeMoveWithBot, searchGameRequest, surrenderGame } from '../services/game.service';
+import { acceptDrawRequest, drawGameRequest, invitePlayerRequest, acceptInviteRequest, rejectInviteRequest, makeMove, makeMoveWithBot, searchGameRequest, surrenderGame } from '../services/game.service';
 import { CreateGameRequestPayload, GameParams, InvitePlayerRequestBody, OnlineGameWebsocketMessage, BotGameWebsocketMessage, GameWebsocketPayload, CreateGameWithBotRequestPayload } from './types';
 
 export async function createGame(request: CreateGameRequestPayload, reply: FastifyReply) {
@@ -135,6 +135,30 @@ export async function invitePlayer(request: FastifyRequest<{ Params: GameParams,
 
     await invitePlayerRequest(reply, game!, decodedToken.userId, request.body.playerId);
     return reply.code(200).send({ message: 'INVITE_REQUESTED' });
+}
+
+export async function acceptInvite(request: FastifyRequest<{ Params: GameParams }>, reply: FastifyReply) {
+    const decodedToken: { userId: string } = await request.jwtDecode();
+    const game = getGameFromRequest(reply, gamesCache.get(request.params.gameId), decodedToken.userId)
+    if (!game || game.gameType != 'private') 
+        return reply.status(403).send({ message: 'FORBIDDEN' });
+    if (game.players.length == maxPlayers) 
+        return reply.status(400).send({ message: 'GAME_IS_FULL' });
+
+    acceptInviteRequest(reply, game, decodedToken.userId);
+    return reply.code(200).send({ message: 'INVITE_ACCEPTED' });
+}
+
+export async function rejectInvite(request: FastifyRequest<{ Params: GameParams }>, reply: FastifyReply) {
+    const decodedToken: { userId: string } = await request.jwtDecode();
+    const game = getGameFromRequest(reply, gamesCache.get(request.params.gameId), decodedToken.userId)
+    if (!game || game.gameType != 'private') 
+        return reply.status(403).send({ message: 'FORBIDDEN' });
+    if (game.players.length == maxPlayers) 
+        return reply.status(400).send({ message: 'GAME_IS_FULL' });
+
+    rejectInviteRequest(reply, game, decodedToken.userId);
+    return reply.code(200).send({ message: 'INVITE_DECLINED' });
 }
 
 export async function onlineGameWebsocket(socket: WebSocket, request: GameWebsocketPayload) {
