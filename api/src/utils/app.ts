@@ -1,5 +1,5 @@
 import fastify from 'fastify';
 
-const app = fastify({ logger: true });
+const app = fastify();
 
 export default app;

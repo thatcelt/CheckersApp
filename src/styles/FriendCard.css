@@ -1,0 +1,80 @@
+@font-face {
+    font-family: NotoColorEmoji;
+    unicode-range: U+1F1E6-1F1FF;
+    src: url("/public/fonts/NotoColorEmoji.ttf") format('truetype');
+}
+
+.friend-card-container {
+    width: 284px;
+    height: 58px;
+    border-radius: 14px;
+    background: #F7F7F7;
+    display: flex;
+    align-items: center;
+    box-shadow: 1px 1px 3px 0px rgba(0, 0, 0, 0.15), 1px 1px 10px 0px rgba(0, 0, 0, 0.15), -2px -2px 12px 0px rgba(255, 255, 255, 0.30) inset, -2px -2px 4px 0px rgba(255, 255, 255, 0.30) inset;
+    margin-top: 10px;
+}
+
+.friend-card-avatar {
+    margin-left: 20px;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 40px;
+    background: #ECEFF1;
+    box-shadow: 1px -1px 3px 0px rgba(255, 255, 255, 0.25) inset, -1px -1px 2px 0px rgba(255, 255, 255, 0.60), -1px -1px 4px 0px rgba(255, 255, 255, 0.60), 1px 1px 2px 0px rgba(0, 0, 0, 0.10), 1px 1px 3px 0px rgba(0, 0, 0, 0.20);
+}
+
+.friend-card-avatar > img {
+    border-radius: 50%;
+    width: 34px;
+    height: 34px;
+}
+
+.friend-card-info {
+    margin-left: 15px;
+}
+
+.friend-card-info-general {
+    font-size: 16px;
+    margin-bottom: 5px;
+    font-family: MontserratRegular;
+}
+
+.friend-card-country {
+    font-family: NotoColorEmoji;
+    font-size: 12px;
+    margin-left: 15px;
+}
+
+.scores-container {
+    width: 74px;
+    height: 18px;
+    border-radius: 5px;
+    background: #C1C1C1;
+    font-size: 12px;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 10px;
+    justify-content: flex-start;
+}
+
+.scores-container > img {
+    margin-left: 5px;
+    width: 12px;
+    height: 11px;
+}
+
+.scores-count-container {
+    display: inline;
+    line-height: 15px;
+}
+
+.scores-count-container > span {
+    font-family: MontserratBold;
+    vertical-align: text-bottom;
+}

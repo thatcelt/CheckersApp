@@ -52,6 +52,6 @@ export type Position = [number, number];
 export type Move = [Position, Position];
 export const BOARD_SIZE = 8;
 
-playerPlaces.set('White', 0);
-playerPlaces.set('Black', 1);
+playerPlaces.set('WHITE', 0);
+playerPlaces.set('BLACK', 1);
 playerPlaces.set('Draw', 2);

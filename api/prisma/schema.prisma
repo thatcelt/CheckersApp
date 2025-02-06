@@ -38,10 +38,11 @@ model Friendship {
 }
 
 model PlayedGame {
-  playedGameId String           @id
+  autoGameId   Int              @id @unique @default(autoincrement())
+  playedGameId String
   userId       String
   status       PlayedGameStatus
-  playedDate   Int
+  playedDate   String
 
   user User @relation(fields: [userId], references: [userId])
 }

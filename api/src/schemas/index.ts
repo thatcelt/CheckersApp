@@ -14,7 +14,7 @@ export const editProfileSchema: FastifySchema = {
     body: {
         type: 'object',
         properties: {
-            language: { type: 'string', enum: [ 'en-US', 'ru-RU', 'uk' ] },
+            language: { type: 'string', enum: [ 'en', 'ru', 'ua' ] },
             username: { type: 'string' }, 
             profilePicture: { type: 'string' }
         }

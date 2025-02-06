@@ -14,11 +14,11 @@ export async function setGameResults(gameId: string, players: string[], winnerId
         const connectedSocket = inGameCache.get(player)
         if (connectedSocket) {
             connectedSocket.close();
-
+        
             await prisma.playedGame.create({
                 data: {
                     playedGameId: gameId,
-                    playedDate: Date.now(),
+                    playedDate: Date.now().toString(),
                     status: winnerId == player ? 'WIN' : isDrawed ? 'DRAW' : 'LOSS',
                     userId: player
                 }
@@ -49,7 +49,7 @@ export async function makeMove(socket: WebSocket, game: CachedGame, websocketMes
     if (!websocketMessage.move)
         return socket.send(JSON.stringify({ error: 'INVALID_MOVE' }));
 
-    if (game.players.indexOf(userId) + 1 != game.game.currentTurn)
+    if (game.players.indexOf(userId) + 1 != game.game.currentTurn && !game.players.includes('nothing'))
         return socket.send(JSON.stringify({ error: 'NOT_YOUR_TURN' }));
 
     const validMoves = game.game.getValidMoves(websocketMessage.move[0][0], websocketMessage.move[0][1]);
@@ -63,6 +63,7 @@ export async function makeMove(socket: WebSocket, game: CachedGame, websocketMes
     game.game.movePiece(websocketMessage.move[0], websocketMessage.move[1]);
 
     const checkedWinner = game.game.checkForWinner();
+
     if (checkedWinner) {
         game.winner = checkedWinner;
         game.reason = checkedWinner == 'White' ? 'YOUR_OPPONENT_NO_POSSIBLE_MOVES_LEFT' : 'AI_YOU_ARE_NO_POSSIBLE_MOVES';
@@ -83,9 +84,10 @@ export async function makeMove(socket: WebSocket, game: CachedGame, websocketMes
         reason: game.reason
     }));
 
-    if (checkedWinner) {
+    if (checkedWinner && game.players[1] != 'nothing') {
         const playerPlace = playerPlaces.get(checkedWinner);
-        if (playerPlace) await setGameResults(game.gameId, game.players, game.players[playerPlace], false);
+        await setGameResults(game.gameId, game.players, game.players[playerPlace!], false);
+    } else if (checkedWinner && game.players[1] == 'nothing') {
         socket.close()
     }
 }
@@ -157,8 +159,8 @@ export async function surrenderGame(game: CachedGame, surrenderer: string) {
     }));
 
     const playerPlace = playerPlaces.get(checkedWinner);
-    if (!game.players.includes('bot') && playerPlace) {
-        await setGameResults(game.gameId, game.players, game.players[playerPlace], false);
+    if (!game.players.includes('bot')) {
+        await setGameResults(game.gameId, game.players, game.players[playerPlace!], false);
     } else {
         game.players.map(player => player !== 'bot' && inGameCache.delete(player));
         gamesCache.delete(game.gameId);

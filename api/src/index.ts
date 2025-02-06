@@ -38,7 +38,7 @@ app.register(gameRoutes, { prefix: '/api/v1/game' });
 
 const start = async () => {
     await app.listen({ port: 3000 });
-    console.log('Listening', app.printRoutes());
+    console.log("Server started!");
 }
 
 start();

@@ -1,17 +1,18 @@
-import { FastifyReply, FastifyRequest } from 'fastify';
-import { drawTimeoutValue, emptyBoard, gamesCache, GameTypes, inGameCache, maxPlayers } from '../constants';
-import { v4 as uuidv4 } from 'uuid';
-import { CreateGameRequestPayload, GameParams, InvitePlayerRequestBody, OnlineGameWebsocketMessage, BotGameWebsocketMessage, GameWebsocketPayload, CreateGameWithBotRequestPayload } from './types';
-import { Game, Piece } from '../utils/game';
-import { WebSocket } from '@fastify/websocket';
-import { acceptDrawRequest, drawGameRequest, invitePlayerRequest, makeMove, makeMoveWithBot, searchGameRequest, surrenderGame } from '../services/game.service';
-import { gameSendMessages, getGameFromRequest, getGameFromSocket } from '../utils/utils';
-import prisma from '../utils/prisma';
 import app from '../utils/app';
+import prisma from '../utils/prisma';
+
 import { Bot } from '../utils/bot';
+import { v4 as uuidv4 } from 'uuid';
+import { Game, Piece, Turn } from '../utils/game';
+import { WebSocket } from '@fastify/websocket';
+import { FastifyReply, FastifyRequest } from 'fastify';
+import { gameSendMessages, getGameFromRequest, getGameFromSocket } from '../utils/utils';
+import { drawTimeoutValue, emptyBoard, gamesCache, GameTypes, inGameCache, maxPlayers } from '../constants';
+import { acceptDrawRequest, drawGameRequest, invitePlayerRequest, makeMove, makeMoveWithBot, searchGameRequest, surrenderGame } from '../services/game.service';
+import { CreateGameRequestPayload, GameParams, InvitePlayerRequestBody, OnlineGameWebsocketMessage, BotGameWebsocketMessage, GameWebsocketPayload, CreateGameWithBotRequestPayload } from './types';
 
 export async function createGame(request: CreateGameRequestPayload, reply: FastifyReply) {
-    const decodedToken: { userId: string} = await request.jwtDecode();
+    const decodedToken: { userId: string } = await request.jwtDecode();
     if (inGameCache.has(decodedToken.userId)) return reply.status(400).send({ message: 'YOU_ALREADY_IN_GAME' });
     
     const createdGame = new Game(emptyBoard);
@@ -27,7 +28,7 @@ export async function createGame(request: CreateGameRequestPayload, reply: Fasti
 }
 
 export async function createGameWithBot(request: CreateGameWithBotRequestPayload, reply: FastifyReply) {
-    const decodedToken: { userId: string} = await request.jwtDecode();
+    const decodedToken: { userId: string } = await request.jwtDecode();
     if (inGameCache.has(decodedToken.userId)) return reply.status(400).send({ message: 'YOU_ALREADY_IN_GAME' });
     
     const createdGame = new Game(emptyBoard);
@@ -42,8 +43,19 @@ export async function createGameWithBot(request: CreateGameWithBotRequestPayload
     return reply.code(200).send({ message: 'GAME_CREATED', gameId: gameId });
 }
 
+export async function createGameOnOneDevice(request: FastifyRequest, reply: FastifyReply) {
+    const decodedToken: { userId: string } = await request.jwtDecode(); 
+    if (inGameCache.has(decodedToken.userId)) return reply.status(400).send({ message: 'YOU_ALREADY_IN_GAME' });
+
+    const createdGame = new Game(emptyBoard);
+    const gameId = uuidv4();
+
+    gamesCache.set(gameId, { gameId: gameId, players: [decodedToken.userId, 'nothing'], game: createdGame, drawTime: 0, gameType: GameTypes.PRIVATE, creatorScores: 0 });
+    return reply.code(200).send({ message: 'GAME_CREATED', gameId: gameId });
+}
+
 export async function joinGame(request: FastifyRequest<{ Params: GameParams }>, reply: FastifyReply) {
-    const decodedToken: { userId: string} = await request.jwtDecode();
+    const decodedToken: { userId: string } = await request.jwtDecode();
     if (inGameCache.has(decodedToken.userId)) return reply.status(400).send({message: 'YOU_ALREADY_IN_GAME'});
 
     const game = gamesCache.get(request.params.gameId)
@@ -77,7 +89,7 @@ export async function joinGame(request: FastifyRequest<{ Params: GameParams }>, 
 }
 
 export async function searchGame(request: FastifyRequest, reply: FastifyReply) {
-    const decodedToken: { userId: string} = await request.jwtDecode();
+    const decodedToken: { userId: string } = await request.jwtDecode();
     if (inGameCache.has(decodedToken.userId)) return reply.status(400).send({message: 'YOU_ALREADY_IN_GAME'});
     const userData = await prisma.user.findUniqueOrThrow({
         where: {
@@ -89,15 +101,16 @@ export async function searchGame(request: FastifyRequest, reply: FastifyReply) {
 }
 
 export async function surrender(request: FastifyRequest<{ Params: GameParams }>, reply: FastifyReply) {
-    const decodedToken: { userId: string} = await request.jwtDecode();
+    const decodedToken: { userId: string } = await request.jwtDecode();
     const game = getGameFromRequest(reply, gamesCache.get(request.params.gameId), decodedToken.userId);
-
-    await surrenderGame(game!, decodedToken.userId);
+    if (!game?.players.includes('nothing')) {
+        await surrenderGame(game!, decodedToken.userId);
+    }
     return reply.code(200).send({ message: 'GAME_IS_SURRENDERED' });
 }
 
 export async function drawRequest(request: FastifyRequest<{ Params: GameParams }>, reply: FastifyReply) {
-    const decodedToken: { userId: string} = await request.jwtDecode();
+    const decodedToken: { userId: string } = await request.jwtDecode();
     const game = getGameFromRequest(reply, gamesCache.get(request.params.gameId), decodedToken.userId)
 
     if (Date.now() - game!.drawTime < drawTimeoutValue)
@@ -112,7 +125,7 @@ export async function drawRequest(request: FastifyRequest<{ Params: GameParams }
 }
 
 export async function invitePlayer(request: FastifyRequest<{ Params: GameParams, Body: InvitePlayerRequestBody }>, reply: FastifyReply) {
-    const decodedToken: { userId: string} = await request.jwtDecode();
+    const decodedToken: { userId: string } = await request.jwtDecode();
     const game = getGameFromRequest(reply, gamesCache.get(request.params.gameId), decodedToken.userId);
 
     if (game!.gameType != 'private') 
@@ -156,7 +169,7 @@ export async function onlineGameWebsocket(socket: WebSocket, request: GameWebsoc
     }
 
     socket.on('close', async () => {
-        if (game)
+        if (game && !game.winner)
             await surrenderGame(game, decodedToken.userId)
     });
 
@@ -208,7 +221,8 @@ export async function botGameWebSocket(socket: WebSocket, request: GameWebsocket
     }));
 
     socket.on('close', () => {
-        inGameCache.delete(decodedToken.userId)
+        inGameCache.delete(decodedToken.userId);
+        gamesCache.delete(request.query.gameId);
     });
 
     socket.on('message', async message => {
@@ -237,6 +251,54 @@ export async function botGameWebSocket(socket: WebSocket, request: GameWebsocket
             
             case 'ACCEPT_DRAW': {
                 await acceptDrawRequest(game, decodedToken.userId);
+                break;
+            }
+        }
+    })
+}
+
+export async function onOneDeviceGameWebSocket(socket: WebSocket, request: GameWebsocketPayload) {
+    const decodedToken: { userId: string } | null = app.jwt.decode(request.query.token);
+    if (!decodedToken) {
+        socket.close();
+        return;
+    }
+
+    const game = gamesCache.get(request.query.gameId);
+    inGameCache.set(decodedToken.userId, socket);
+
+    socket.send(JSON.stringify({
+        t: 'NEXT_MOVE',
+        board: game?.game.board,
+        currentTurn: game?.game.currentTurn,
+        possibleMoves: game?.game.getAllValidMoves(game.game.currentTurn == Turn.Black ? Piece.BLACK_PIECE : Piece.WHITE_PIECE)
+    }));
+
+    socket.on('close', () => {
+        inGameCache.delete(decodedToken.userId);
+        gamesCache.delete(request.query.gameId);
+    })
+
+    socket.on('message', async message => {
+        let parsedMessage: OnlineGameWebsocketMessage
+
+        try {
+            parsedMessage = JSON.parse(message.toString());
+        } catch (error) {
+            socket.send(JSON.stringify({ error: 'PARSING_ERROR' }));
+            socket.close();
+            return;
+        }
+
+        const game = getGameFromSocket(socket, gamesCache.get(request.query.gameId), decodedToken.userId);
+        if (!game) {
+            socket.close();
+            return;
+        }
+
+        switch (parsedMessage.action) {
+            case 'MOVE': {
+                await makeMove(socket, game, parsedMessage, decodedToken.userId);
                 break;
             }
         }
