@@ -214,10 +214,8 @@ export async function onlineGameWebsocket(socket: WebSocket, request: GameWebsoc
     socket.on('close', async () => {
         if (game && !game.winner)
             await surrenderGame(game, decodedToken.userId)
-        else {
-            console.log('Не удалось завершить игру для', decodedToken.userId, 'делаем это насильно');
+        else
             inGameCache.delete(decodedToken.userId);
-        }
     });
 
     socket.on('message', async message => {

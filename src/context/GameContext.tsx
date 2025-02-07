@@ -1,4 +1,4 @@
-import { createContext, FC, memo, ReactNode, useMemo, useState } from 'react';
+import { createContext, FC, memo, ReactNode, useMemo, useState, useRef, useEffect } from 'react';
 import { GameContextType, NextMoveStructure, PlayerData } from './types';
 import { EMPTY_BOARD } from '../utils/constants';
 import { animateMove, getLocalizedString, updateBoardDisplay } from '../utils/utils';
@@ -6,7 +6,7 @@ import { useAuthorization } from '../hooks/useAuthorization';
 import { modalController } from './ModalProvider';
 import { LanguageTranslations } from '../utils/types';
 import { useNavigate } from 'react-router-dom';
-import { createGame, invitePlayer } from '../utils/apiWrapper';
+import { createGameWithBot, invitePlayer } from '../utils/apiWrapper';
 
 export const GameContext = createContext<GameContextType | undefined>(undefined)
 
@@ -26,8 +26,13 @@ const GameProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const [earnedBlackChips, setEarnedBlackChips] = useState<number>(0);
     const [moves, setMoves] = useState<number[][][]>([]);
     const [activePiece, setActivePiece] = useState<number[] | null>(null);
-    const [currentColor, setCurrentColor] = useState<number>(1)
-    const navigate = useNavigate()
+    const [currentColor, setCurrentColor] = useState<number>(1);
+    const playersRef = useRef<PlayerData[]>(players);
+    useEffect(() => {
+        playersRef.current = players;
+    }, [players]);
+
+    const navigate = useNavigate();
     const queue: (() => Promise<void>)[] = [];
     let isProcessing: Boolean = false;
     const processQueue = async () => {
@@ -63,7 +68,7 @@ const GameProvider: FC<{ children: ReactNode }> = ({ children }) => {
         queue.length = 0;
     };
    
-    function handleMessage(gameContext: GameContextType, message: any) {
+    function handleMessage(socket: WebSocket, gameContext: GameContextType, message: any) {
         if (message.winner) {
             modalController.createModal({
                 title: `${getLocalizedString(authContext, 'resultsTitle')}: ${getLocalizedString(authContext, message.winner as keyof LanguageTranslations)}`,
@@ -71,17 +76,22 @@ const GameProvider: FC<{ children: ReactNode }> = ({ children }) => {
                 button1: getLocalizedString(authContext, 'rematch'),
                 button2: getLocalizedString(authContext, 'ok'),
                 onButton1Submit: async () => {
-                    const target = gameContext.players.filter(x => x.userId !== authContext.user?.userId);
-                    if (!target?.length) return;
-
-                    gameSocket?.close();
+                    const target = playersRef.current.find(x => x.userId !== authContext.user?.userId);
+                    if (!target) {
+                        const path = window.location.pathname;
+                        navigate('/games', { replace: true }); 
+                        setTimeout(() => navigate(path, { replace: true }), 0); 
+                        return;
+                    }
+                    
+                    socket?.close();
                     resetGame(gameContext);
                     modalController.closeModal();
 
                     navigate('/games');
                     await new Promise(r => setTimeout(() => r(true), 1000));
                 
-                    const result = await invitePlayer(target[0].userId!);
+                    const result = await invitePlayer(target.userId!);
                     switch (result.message) {
                         case 'FRIEND_ALREADY_IN_GAME':
                         case 'YOU_ARE_ALREADY_IN_GAME':
@@ -104,20 +114,30 @@ const GameProvider: FC<{ children: ReactNode }> = ({ children }) => {
                     }
                 },
                 onButton2Submit: async () => {
-                    gameSocket?.close();
+                    socket?.close();
                     resetGame(gameContext);
                     navigate('/games');
                 }
             });
 
-            gameContext.gameSocket?.close();
+            socket?.close();
             return;
         }
 
         switch (message.t) {
+            case 'DRAW_REQUESTED':
+                modalController.createModal({
+                    title: getLocalizedString(authContext, 'suggestDraw'),
+                    message: getLocalizedString(authContext, 'areYouSureDraw'),
+                    button1: getLocalizedString(authContext, 'accept'),
+                    button2: getLocalizedString(authContext, 'reject'),
+                    onButton1Submit: () => socket?.send(JSON.stringify({ action: 'ACCEPT_DRAW' }))
+                });
+                break;
+
             case 'NEXT_MOVE':
                 if (message.players) {
-                    gameContext.setPlayers(
+                    setPlayers(
                         [{
                             userId: message.players[0].userId,
                             nickname: message.players[0].username,
@@ -162,7 +182,7 @@ const GameProvider: FC<{ children: ReactNode }> = ({ children }) => {
         processQueue();
     }
 
-    const gameContextValues = useMemo(() => ({ handleMessage, resetGame, currentColor, setCurrentColor, activePiece, setActivePiece, moves, setMoves, earnedBlackChips, earnedWhiteChips, board, gameId, firstCounter, secondCounter, possibleMultipleMoves, setPossibleMultipleMoves, chipsColor, currentTurn, gameSocket, counterInterval, isJumping, players, setPlayers, setCurrentTurn, setFirstCounter, setSecondCounter, setGameId, setChipsColor, setGameSocket, setBoard, setEarnedBlackChips, setEarnedWhiteChips }), [earnedBlackChips, earnedWhiteChips, board, gameId, firstCounter, secondCounter, possibleMultipleMoves, chipsColor, currentTurn, gameSocket, counterInterval, isJumping, players, setPlayers, setCurrentTurn, setFirstCounter, setSecondCounter, setGameId, setChipsColor, setGameSocket, setBoard, setEarnedBlackChips, setEarnedWhiteChips, moves, activePiece, setActivePiece, currentColor, resetGame, setCurrentColor])
+    const gameContextValues = useMemo(() => ({ playersRef, handleMessage, resetGame, currentColor, setCurrentColor, activePiece, setActivePiece, moves, setMoves, earnedBlackChips, earnedWhiteChips, board, gameId, firstCounter, secondCounter, possibleMultipleMoves, setPossibleMultipleMoves, chipsColor, currentTurn, gameSocket, counterInterval, isJumping, players, setPlayers, setCurrentTurn, setFirstCounter, setSecondCounter, setGameId, setChipsColor, setGameSocket, setBoard, setEarnedBlackChips, setEarnedWhiteChips }), [earnedBlackChips, earnedWhiteChips, board, gameId, firstCounter, secondCounter, possibleMultipleMoves, chipsColor, currentTurn, gameSocket, counterInterval, isJumping, players, setPlayers, setCurrentTurn, setFirstCounter, setSecondCounter, setGameId, setChipsColor, setGameSocket, setBoard, setEarnedBlackChips, setEarnedWhiteChips, moves, activePiece, setActivePiece, currentColor, resetGame, setCurrentColor])
 
     return (
         <GameContext.Provider value={gameContextValues}>

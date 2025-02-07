@@ -15,7 +15,6 @@ if (window.Telegram?.WebApp) {
 	tg.lockOrientation();
 
 	const platform = tg.platform;
-	console.log(platform)
 	tg.requestFullscreen();
 } else {
 	console.error('Telegram WebApp API не найден.');

@@ -7,7 +7,7 @@ import ChipsContainer from "../components/ChipsContainer";
 import ActionGameButton from "../components/ActionGameButton";
 import Desk from "../components/Desk";
 import BottomPanel from "../components/BottomPanel";
-import { joinGame, surrender, token } from "../utils/apiWrapper";
+import { drawRequest, joinGame, surrender, token } from "../utils/apiWrapper";
 import { modalController } from "../context/ModalProvider";
 import '../styles/GameWithBotPage.css'
 import { useSocket } from "../hooks/useSocket";
@@ -132,6 +132,8 @@ const GameWithInvited: FC = () => {
     }, [gameContext.currentTurn]);
 
     const onClickGiveUp = useCallback(() => {
+        if (gameContext.playersRef.current.filter(x => x.userId).length <= 1) return;
+
         modalController.createModal({
             title: getLocalizedString(authContext, 'giveUp'),
             message: getLocalizedString(authContext, 'areYouSureGiveUp'),
@@ -144,6 +146,17 @@ const GameWithInvited: FC = () => {
         })
     }, [authContext, gameContext.gameId]);
 
+    const onClickDraw = useCallback(() => {
+        if (gameContext.playersRef.current.filter(x => x.userId).length <= 1) return;
+        
+        modalController.createModal({
+            title: getLocalizedString(authContext, 'suggestDraw'),
+            message: getLocalizedString(authContext, 'areYouSureDraw'),
+            button1: getLocalizedString(authContext, 'accept'),
+            button2: getLocalizedString(authContext, 'reject'),
+            onButton1Submit: () => drawRequest(gameContext.gameId)
+        });
+    }, [authContext, gameContext.gameId]);
     return (
         <>
             <div className="game-container">
@@ -165,6 +178,7 @@ const GameWithInvited: FC = () => {
                 <Desk/>
                 <div className="action-buttons-container">
                     <ActionGameButton title={getLocalizedString(authContext, 'giveUp')} icon='../src/resources/assets/giveup.png' onClick={onClickGiveUp}/>
+                    <ActionGameButton title={getLocalizedString(authContext, 'draw')} icon='../src/resources/assets/draw.png' onClick={onClickDraw}/>
                 </div>
 
                 <BottomPanel activeVariant="games" socket={socketContext.ws.current!} gameId={gameContext.gameId}/>

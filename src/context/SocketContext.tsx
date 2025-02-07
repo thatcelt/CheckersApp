@@ -8,7 +8,7 @@ export const SocketContext = createContext<SocketContextType | undefined>(undefi
 const SocketProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const ws = useRef<WebSocket | null>(null);
     const [ webSocketURI, setWebSocketURI ] = useState<string | null>(null);
-    const onMessageHandler = useRef<((gameContext: GameContextType, message: string) => void) | null>(null);
+    const onMessageHandler = useRef<((socket: WebSocket, gameContext: GameContextType, message: string) => void) | null>(null);
    
     const gameContext = useGame();
     
@@ -33,7 +33,7 @@ const SocketProvider: FC<{ children: ReactNode }> = ({ children }) => {
         ws.current.onmessage = (packet) => {
             const message = JSON.parse(packet.data);
             if (onMessageHandler.current)
-                onMessageHandler?.current(gameContext, message);     
+                onMessageHandler?.current(ws.current!, gameContext, message);     
         };
 
         return () => {
@@ -41,7 +41,7 @@ const SocketProvider: FC<{ children: ReactNode }> = ({ children }) => {
         };
     }, [ webSocketURI ]);
 
-    function setOnMessageHandler(handler: (gameContext: GameContextType, message: any) => void) {
+    function setOnMessageHandler(handler: (socket: WebSocket, gameContext: GameContextType, message: any) => void) {
         onMessageHandler.current = handler;
     }
 

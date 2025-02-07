@@ -18,7 +18,7 @@ export interface PlayerData {
 export interface SocketContextType {
     ws: React.MutableRefObject<WebSocket | null>
     setWebSocketURI: Dispatch<React.SetStateAction<string | null>>
-    setOnMessageHandler: Dispatch<SetStateAction<(gameContext: GameContextType, message: string) => void | null>>
+    setOnMessageHandler: Dispatch<SetStateAction<(socket: WebSocket, gameContext: GameContextType, message: string) => void | null>>
     send: (message: any) => void;
 }
 
@@ -39,6 +39,7 @@ export interface GameContextType {
     moves: number[][][];
     activePiece: number[] | null;
     currentColor: number;
+    playersRef: React.MutableRefObject<PlayerData[]>;
     setCurrentColor: React.Dispatch<React.SetStateAction<number>>;
     setEarnedWhiteChips: React.Dispatch<React.SetStateAction<number>>;
     setEarnedBlackChips: React.Dispatch<React.SetStateAction<number>>;
@@ -54,7 +55,7 @@ export interface GameContextType {
     setActivePiece: React.Dispatch<React.SetStateAction<number[] | null>>;
     setPossibleMultipleMoves: React.Dispatch<React.SetStateAction<number[][]>>;
     resetGame: (gameContext: GameContextType) => void;
-    handleMessage: (gameContext: GameContextType, message: string) => void;
+    handleMessage: (socket: WebSocket, gameContext: GameContextType, message: string) => void;
 }
 
 export interface OnlineSocketContextType {

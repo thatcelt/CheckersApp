@@ -94,10 +94,16 @@
       "noFriends": "There is no one online",
       "OPPONENT_DISCONNECTED": "Opponent is disconnected",
       "AI_YOU_ARE_NO_POSSIBLE_MOVES": "Out of pieces or no possible moves",
-      "search": "Searching"
+      "search": "Searching",
+      "Draw": "Draw",
+      "draw": "Draw",
+      "GAME_WAS_DRAWED": "The game was drawn"
     },
   
     "ru": {
+      "Draw": "Ничья",
+      "draw": "Ничья",
+      "GAME_WAS_DRAWED": "Игра была сыграна вничью",
       "checkersTitle": "Шашки",
       "friends": "Друзья",
       "exitMenu": "Выход в меню",
@@ -196,6 +202,9 @@
     }, 
   
     "ua": {
+      "Draw": "Нічия",
+      "draw": "Нічия",
+      "GAME_WAS_DRAWED": "Гра закінчилася внічию",
       "inviteFailedOffline": "Гравець не в мережі",
       "checkersTitle": "Шашки",
       "exitMenu": "Вийти до меню",

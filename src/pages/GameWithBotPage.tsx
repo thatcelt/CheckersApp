@@ -143,7 +143,7 @@ const GameWithBotPage: FC = () => {
                 <GameWithBot />
             </SocketProvider>
         </GameProvider>
-    )
+    );
 };
 
 export default memo(GameWithBotPage);

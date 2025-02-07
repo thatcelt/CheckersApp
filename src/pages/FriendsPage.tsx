@@ -18,7 +18,6 @@ const FriendsPage: FC = () => {
 
     const fetchFriends = async () => {
         const friendsResults = await getFriends(category);
-        console.log(category, friendsResults)
         setFriendsList(friendsResults.friends);
     }
 

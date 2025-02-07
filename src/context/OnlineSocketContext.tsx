@@ -15,11 +15,8 @@ const OnlineSocketProvider: FC<{ children: ReactNode }> = ({ children }) => {
     
     const connectOnline = useCallback(() => {
         const connectedSocket = connectOnlineSocket(authContext.token, message => {
-            console.log('received new packet', message);
-
             switch (message.t) {
                 case 'INVITE':
-                    console.log('new pending invite', message);
                     modalController.createModal({
                         title: getLocalizedString(authContext, 'invitesTitle'),
                         message: message.inviterUsername + ' ' + getLocalizedString(authContext, 'invitesDescription'),
@@ -28,7 +25,6 @@ const OnlineSocketProvider: FC<{ children: ReactNode }> = ({ children }) => {
                         onButton1Submit: () => {
                             acceptInvite(message.gameId)
                                 .then(result => {
-                                    console.log('result', result)
                                     if (!result) return;
                                     navigate('/play-with-invited', { state: { gameId: message.gameId, isCreator: false } });
                                     modalController.closeModal();
