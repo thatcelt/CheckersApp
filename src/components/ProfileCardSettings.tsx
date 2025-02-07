@@ -1,29 +1,26 @@
-import { FC, memo } from "react";
-import { formatDate, getLocalizedString } from "../utils/utils";
-import { useAuthorization } from "../hooks/useAuthorization";
-import { ProfileCardSettingsProps } from "../props/profileCardSettingsProps";
-import { modalController } from "../context/ModalProvider";
-import { editProfile } from "../utils/apiWrapper";
-import "../styles/PlayerCard.css";
+import { FC, memo } from 'react';
+import { formatDate, getLocalizedString } from '../utils/utils';
+import { useAuthorization } from '../hooks/useAuthorization';
+import { ProfileCardSettingsProps } from '../props/profileCardSettingsProps';
+import { modalController } from '../context/ModalProvider';
+import { editProfile } from '../utils/apiWrapper';
+import '../styles/PlayerCard.css';
 
 const ProfileCardSettings: FC<ProfileCardSettingsProps> = ({ username, profilePicture, registrationDate }) => {
     const authContext = useAuthorization()
 
     const openChangeUsername = () => {
         modalController.createModal({
-            title: getLocalizedString(authContext, "changeNickname"),
-            message: getLocalizedString(authContext, "typeHere"),
-            button1: getLocalizedString(authContext, "ok"),
-            button2: getLocalizedString(authContext, "cancel"),
+            title: getLocalizedString(authContext, 'changeNickname'),
+            message: getLocalizedString(authContext, 'typeHere'),
+            button1: getLocalizedString(authContext, 'ok'),
+            button2: getLocalizedString(authContext, 'cancel'),
             messageAsInput: true,
             maxInputLength: 12,
             onButton1Submit: async (newNickname) => {
                 if (newNickname?.length == 0) return;
-                await editProfile({ username: newNickname })
-                authContext.setUser({
-                    ...authContext.user!,
-                    username: newNickname!
-                })
+                await editProfile({ username: newNickname });
+                authContext.setUser({ ...authContext.user!, username: newNickname! });
             }
         })
     }
@@ -41,7 +38,7 @@ const ProfileCardSettings: FC<ProfileCardSettingsProps> = ({ username, profilePi
                     <span className="profile-info-nickname">{username}</span>
                     <span className="profile-info-username">{username}</span>
                     <span className="profile-info-date">
-                        {getLocalizedString(authContext, "registeredSince")} {formatDate(new Date(Number(registrationDate))).date || "N/A"}
+                        {getLocalizedString(authContext, 'registeredSince')} {formatDate(new Date(Number(registrationDate))).date || 'N/A'}
                     </span>
                 </div>
                 <div className="edit-profile-button" onClick={openChangeUsername}>
@@ -51,6 +48,6 @@ const ProfileCardSettings: FC<ProfileCardSettingsProps> = ({ username, profilePi
         </div>
         </>
     )
-}
+};
 
-export default memo(ProfileCardSettings)
+export default memo(ProfileCardSettings);

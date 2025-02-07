@@ -1,8 +1,7 @@
-import { FC } from "react"
-import { RIGHT_BACKLIGHTS } from "../utils/constants";
+import { FC } from 'react';
+import { RIGHT_BACKLIGHTS } from '../utils/constants';
 
 const ChipsContainer: FC<{ currentTurn: number, earnedChips: number, type: string }> = ({ currentTurn, earnedChips, type }) => {
-
     return (
         <>
         <div
@@ -13,6 +12,6 @@ const ChipsContainer: FC<{ currentTurn: number, earnedChips: number, type: strin
         </div>
         </>
     )
-}
+};
 
 export default ChipsContainer;

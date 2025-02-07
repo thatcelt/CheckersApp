@@ -1,14 +1,15 @@
-import { FC, memo, MutableRefObject, useCallback, useEffect, useRef, useState } from "react";
-import { useGame } from "../hooks/useGame";
-import { enableTimer, updateActivePlayer } from "../utils/utils";
-import ChipsContainer from "../components/ChipsContainer";
-import Desk from "../components/Desk";
-import BottomPanel from "../components/BottomPanel";
-import { createGameOnOneDevice, token } from "../utils/apiWrapper";
-import '../styles/GameWithBotPage.css'
-import { useSocket } from "../hooks/useSocket";
-import { API_URL } from "../utils/constants";
-import SocketProvider from '../context/SocketContext'
+import { FC, memo, MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
+import { useGame } from '../hooks/useGame';
+import { enableTimer, updateActivePlayer } from '../utils/utils';
+import ChipsContainer from '../components/ChipsContainer';
+import Desk from '../components/Desk';
+import BottomPanel from '../components/BottomPanel';
+import { createGameOnOneDevice, token } from '../utils/apiWrapper';
+import '../styles/GameWithBotPage.css';
+import { useSocket } from '../hooks/useSocket';
+import { API_URL } from '../utils/constants';
+import SocketProvider from '../context/SocketContext';
+import GameProvider from '../context/GameContext'
 
 const GameOnOneDevice: FC = () => {
     const gameContext = useGame();
@@ -22,8 +23,8 @@ const GameOnOneDevice: FC = () => {
     const timerIntervalRef = useRef<number | undefined>(undefined);
 
     const createGame = useCallback(async () => {
-        gameContext.resetGame(gameContext)
-        const gameResults = await createGameOnOneDevice()
+        gameContext.resetGame(gameContext);
+        const gameResults = await createGameOnOneDevice();
         gameContext.setGameId(gameResults!.gameId);
         socketContext.setWebSocketURI(`wss://${API_URL}/api/v1/game/oneDevice?gameId=${gameResults!.gameId}&token=${token}`);
         socketContext.setOnMessageHandler(gameContext.handleMessage);
@@ -73,8 +74,7 @@ const GameOnOneDevice: FC = () => {
     return (
         <>
             <div className="game-container">
-                <div
-                    className="friends-time-block" style={{'marginBottom': '20px', transform: "rotate(180deg)"}}>
+                <div className="friends-time-block" style={{ marginBottom: '20px', transform: 'rotate(180deg)' }}>
                     <div className="friends-time-container" id="friends-time-container-2" ref={playersContainers[1]}>
                         {`${Math.floor(gameContext.secondCounter / 60)}:${String(gameContext.secondCounter % 60).padStart(2, '0')}`}
                     </div>
@@ -93,21 +93,21 @@ const GameOnOneDevice: FC = () => {
                         {`${Math.floor(gameContext.firstCounter / 60)}:${String(gameContext.firstCounter % 60).padStart(2, '0')}`}
                     </div>
                 </div>
-                <BottomPanel activeVariant="games" socket={socketContext.ws.current!}/>
+                <BottomPanel activeVariant="games" socket={socketContext.ws.current!} gameId={gameContext.gameId}/>
                 <div className="game-shining" />
             </div>
         </>
     )
 }
 
-
 const GameOnOneDevicePage: FC = () => {
     return (
-        <SocketProvider>
-            <GameOnOneDevice />
-        </SocketProvider>
+        <GameProvider>
+            <SocketProvider>
+                <GameOnOneDevice />
+            </SocketProvider>
+        </GameProvider>
     )
 };
-
 
 export default memo(GameOnOneDevicePage);

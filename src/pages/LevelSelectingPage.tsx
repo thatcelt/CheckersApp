@@ -1,5 +1,5 @@
 import { FC, memo } from 'react';
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 import { useAuthorization } from '../hooks/useAuthorization';
 import '../styles/VariantsSelecting.css';
 import BottomPanel from '../components/BottomPanel';
@@ -7,9 +7,8 @@ import { getLocalizedString } from '../utils/utils';
 import SelectingVariant from '../components/SelectingVariant';
 
 const LevelSelectingPage: FC = () => {
-    const navigate = useNavigate()
-    const authContext = useAuthorization()
-    
+    const navigate = useNavigate();
+    const authContext = useAuthorization();
     return (
         <>
             <div className="variants-selecting-container">

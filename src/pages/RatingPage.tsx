@@ -1,31 +1,31 @@
-import { FC, memo, useEffect, useState } from "react";
-import BottomPanel from "../components/BottomPanel";
-import RatingProfileCard from "../components/RatingProfileCard";
-import { getRatings } from "../utils/apiWrapper";
-import { RatingResponse } from "./types";
-import { getLocalizedString } from "../utils/utils";
-import { useAuthorization } from "../hooks/useAuthorization";
-import RatingCard from "../components/RatingCard";
-import RatingLeaderCard from "../components/RatingCardLeader";
-import '../styles/RatingPage.css'
+import { FC, memo, useEffect, useState } from 'react';
+import BottomPanel from '../components/BottomPanel';
+import RatingProfileCard from '../components/RatingProfileCard';
+import { getRatings } from '../utils/apiWrapper';
+import { RatingResponse } from './types';
+import { getLocalizedString } from '../utils/utils';
+import { useAuthorization } from '../hooks/useAuthorization';
+import RatingCard from '../components/RatingCard';
+import RatingLeaderCard from '../components/RatingCardLeader';
+import '../styles/RatingPage.css';
 
 const RatingPage: FC = () => {
-    const [ratingData, setRatingData] = useState<RatingResponse | null>(null)
-    const authContext = useAuthorization()
-    const [loading, setLoading] = useState(true)
+    const [ratingData, setRatingData] = useState<RatingResponse | null>(null);
+    const authContext = useAuthorization();
+    const [loading, setLoading] = useState(true);
 
     const getRatingList = async () => {
-        const ratingResults = await getRatings()
-        setRatingData(ratingResults)
-    }
+        const ratingResults = await getRatings();
+        setRatingData(ratingResults);
+    };
 
     useEffect(() => {
         try {
-            getRatingList()
+            getRatingList();
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
-    }, [])
+    }, []);
 
     if (loading) {
         return (
@@ -33,11 +33,10 @@ const RatingPage: FC = () => {
             <h1>Loading...</h1>
           </div>
         );
-      }
-    else {
+    } else {
         return (
             <>
-            <div className="rating-container">
+                <div className="rating-container">
                     <div className="scores-card-container">
                         <RatingProfileCard profilePicture={ratingData?.user.userData.profilePicture} scores={ratingData?.user.userData.scores} position={ratingData?.user.index}/>
                         <div className="rating-list-container">
@@ -72,6 +71,6 @@ const RatingPage: FC = () => {
             </>
         )
     }
-}
+};
 
-export default memo(RatingPage);
+export default memo(RatingPage);    

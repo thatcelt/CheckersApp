@@ -1,6 +1,6 @@
 import { Piece, Position, BOARD_SIZE } from '../utils/types';
 
-function getCaptures(board: Piece[][], pieceCoordinates: Position): Position[] {
+export function getCaptures(board: Piece[][], pieceCoordinates: Position): Position[] {
     const piece = board[pieceCoordinates[0]][pieceCoordinates[1]];
     
     for (let i = 0; i < board.length; i++)
@@ -116,7 +116,3 @@ function getValidMovesForKing(board: Piece[][], row: number, column: number, pie
 
     return captures.length > 0 ? captures : validMoves;
 }
-
-export {
-    getCaptures
-};

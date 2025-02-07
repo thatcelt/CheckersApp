@@ -6,13 +6,11 @@ import { modalController } from '../context/ModalProvider';
 import BottomPanelButton from './BottomPanelButton';
 import '../styles/BottomPanel.css';
 import { surrender } from '../utils/apiWrapper';
-import { useGame } from '../hooks/useGame';
 
-const BottomPanel: FC<{ activeVariant: string, socket?: WebSocket }> = ({ activeVariant, socket }) => {
+const BottomPanel: FC<{ activeVariant: string, socket?: WebSocket, gameId?: string }> = ({ activeVariant, socket, gameId }) => {
     const navigate = useNavigate();
-    const gameContext = useGame()
     const authContext = useAuthorization();
-    const [navigatePath, setNavigatePath] = useState<string>('')
+    const [navigatePath, setNavigatePath] = useState<string>('');
 
     useEffect(() => {
         const activeElement = document.getElementById(activeVariant);
@@ -31,25 +29,21 @@ const BottomPanel: FC<{ activeVariant: string, socket?: WebSocket }> = ({ active
     }, [activeVariant]);
 
     const onClickNavigate = (event: MouseEvent<HTMLDivElement>) => {
-        if (Number(localStorage.getItem('selectionChanged')) === 1) {
+        if (Number(localStorage.getItem('selectionChanged')) == 1) {
             window.Telegram.WebApp.HapticFeedback.selectionChanged();
         }
         setNavigatePath(event.currentTarget.id);
     
-        if (activeVariant === "games") {
-            if ((socket?.readyState === WebSocket.OPEN) || (gameContext.gameSocket?.readyState === WebSocket.OPEN)) {
+        if (activeVariant == 'games') {
+            if (socket?.readyState === WebSocket.OPEN) {
                 modalController.createModal({
                     title: getLocalizedString(authContext, 'exitMenu'),
                     message: getLocalizedString(authContext, 'exitMenuDescription'),
                     button1: getLocalizedString(authContext, 'yes'),
                     button2: getLocalizedString(authContext, 'no'),
                     onButton1Submit: async () => {
-                        await surrender(gameContext.gameId);
-                        if (socket) socket.close();
-                        else if (gameContext.gameSocket) {
-                            gameContext.gameSocket.close();
-                            gameContext.resetGame(gameContext);
-                        };
+                        await surrender(gameId!);
+                        socket?.close();
                         navigate(`/${navigatePath}`);
                     }
                 });

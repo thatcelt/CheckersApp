@@ -1,13 +1,13 @@
-import { FC, memo, useCallback, useEffect, useState } from "react";
-import { getUser } from "../utils/apiWrapper";
-import { useAuthorization } from "../hooks/useAuthorization";
-import { useNavigate } from "react-router-dom";
-import { formatDate, getLocalizedString } from "../utils/utils";
-import ProfileCard from "../components/ProfileCard";
-import ProfileStatistics from "../components/ProfileStatistics";
-import { GameHistory, UserData } from "./types";
+import { FC, memo, useCallback, useEffect, useState } from 'react';
+import { getUser } from '../utils/apiWrapper';
+import { useAuthorization } from '../hooks/useAuthorization';
+import { useNavigate } from 'react-router-dom';
+import { formatDate, getLocalizedString } from '../utils/utils';
+import ProfileCard from '../components/ProfileCard';
+import ProfileStatistics from '../components/ProfileStatistics';
+import { GameHistory, UserData } from './types';
 import '../styles/ProfilePage.css'
-import BottomPanel from "../components/BottomPanel";
+import BottomPanel from '../components/BottomPanel';
 
 const ProfilePage: FC = () => {
     const navigate = useNavigate();
@@ -28,16 +28,16 @@ const ProfilePage: FC = () => {
             gameHistory: userResults.gameHistory
         })
         if (userResults.user.username.length > 12) userData!.user.username = userResults.user.username.slice(0, 12) + "...";
-    }, [userData])
+    }, [userData]);
 
     useEffect(() => {
-        getUserData()
-    }, [])
+        getUserData();
+    }, []);
     
     return (
         <>
             <div className="buttons-container">
-                <div className="settings-button" onClick={() => navigate("/settings")}>
+                <div className="settings-button" onClick={() => navigate('/settings')}>
                     <img src="../src/resources/assets/settings.png" alt={getLocalizedString(authContext, 'settings')} />
                 </div>
             </div>
@@ -65,6 +65,6 @@ const ProfilePage: FC = () => {
             </div>
         </>
     )
-}
+};
 
 export default memo(ProfilePage);

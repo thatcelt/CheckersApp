@@ -1,4 +1,4 @@
-import { FC, memo } from "react";
+import { FC, memo } from 'react';
 
 const SettingsCard: FC<{ textArea: string, textEnd?: string, onClick: () => void }> = ({ textArea, textEnd, onClick }) => {
     return (
@@ -12,6 +12,6 @@ const SettingsCard: FC<{ textArea: string, textEnd?: string, onClick: () => void
         </div>
         </>
     )
-}
+};
 
 export default memo(SettingsCard);

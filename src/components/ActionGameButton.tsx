@@ -1,4 +1,4 @@
-import { FC, memo } from "react";
+import { FC, memo } from 'react';
 
 const ActionGameButton: FC<{ title: string, icon: string, onClick: () => void }> = ({ title, icon, onClick }) => {
     return (

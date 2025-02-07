@@ -1,9 +1,9 @@
-import { FC } from "react";
-import { getLocalizedString } from "../utils/utils";
-import { useAuthorization } from "../hooks/useAuthorization";
+import { FC } from 'react';
+import { getLocalizedString } from '../utils/utils';
+import { useAuthorization } from '../hooks/useAuthorization';
 
 const RatingProfileCard: FC<{ scores?: number, profilePicture?: string, position?: number }> = ({ scores, profilePicture, position }) => {
-    const authContext = useAuthorization()
+    const authContext = useAuthorization();
     
     return (
         <div className="scores-card animated">
@@ -23,6 +23,6 @@ const RatingProfileCard: FC<{ scores?: number, profilePicture?: string, position
             </div>
         </div>
     )
-}
+};
 
 export default RatingProfileCard;

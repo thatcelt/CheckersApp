@@ -7,13 +7,14 @@ import ChipsContainer from "../components/ChipsContainer";
 import ActionGameButton from "../components/ActionGameButton";
 import Desk from "../components/Desk";
 import BottomPanel from "../components/BottomPanel";
-import { joinGame, searchGame, surrender, token } from "../utils/apiWrapper";
+import { joinGame, surrender, token } from "../utils/apiWrapper";
 import { modalController } from "../context/ModalProvider";
 import '../styles/GameWithBotPage.css'
 import { useSocket } from "../hooks/useSocket";
 import { API_URL } from "../utils/constants";
 import SocketProvider from '../context/SocketContext'
 import { useLocation } from 'react-router-dom';
+import GameProvider from '../context/GameContext'
 
 const GameWithInvited: FC = () => {
     const location = useLocation();
@@ -165,7 +166,7 @@ const GameWithInvited: FC = () => {
                     <ActionGameButton title={getLocalizedString(authContext, 'giveUp')} icon='../src/resources/assets/giveup.png' onClick={onClickGiveUp}/>
                 </div>
 
-                <BottomPanel activeVariant="games" socket={socketContext.ws.current!}/>
+                <BottomPanel activeVariant="games" socket={socketContext.ws.current!} gameId={gameContext.gameId}/>
                 <div className="game-shining" />
             </div>
         </>
@@ -174,9 +175,11 @@ const GameWithInvited: FC = () => {
 
 const GameWithInvitedPage: FC = () => {
     return (
-        <SocketProvider>
-            <GameWithInvited />
-        </SocketProvider>
+        <GameProvider>  
+            <SocketProvider>
+                <GameWithInvited />
+            </SocketProvider>
+        </GameProvider>
     )
 };
 

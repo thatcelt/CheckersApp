@@ -1,10 +1,10 @@
-import { FC } from "react";
-import { useAuthorization } from "../hooks/useAuthorization";
-import { getLocalizedString } from "../utils/utils";
-import { LanguageTranslations } from "../utils/types";
+import { FC } from 'react';
+import { useAuthorization } from '../hooks/useAuthorization';
+import { getLocalizedString } from '../utils/utils';
+import { LanguageTranslations } from '../utils/types';
 
 const BottomPanelButton: FC<{ name: keyof LanguageTranslations, icon: string, onClick: (event: any) => void }> = ({ name, icon, onClick }) => {
-    const authContext = useAuthorization()
+    const authContext = useAuthorization();
 
     return (
         <>

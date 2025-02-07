@@ -15,6 +15,7 @@ import { useParams } from 'react-router-dom';
 import { DifficultyType } from '../utils/types';
 import { useSocket } from '../hooks/useSocket';
 import SocketProvider from '../context/SocketContext'
+import GameProvider from '../context/GameContext'
 
 const GameWithBot: FC = () => {
     const authContext = useAuthorization();
@@ -45,7 +46,7 @@ const GameWithBot: FC = () => {
 
     const createGame = useCallback(async () => {
         const result = await createGameWithBot(params.difficulty as unknown as DifficultyType);
-        gameContext.setGameId(result.gameId)
+        gameContext.setGameId(result.gameId);
     }, [params.difficulty]);
 
     useEffect(() => {
@@ -98,12 +99,12 @@ const GameWithBot: FC = () => {
             button1: getLocalizedString(authContext, 'confirm'),
             button2: getLocalizedString(authContext, 'cancel'),
             onButton1Submit: async () => {
-                gameContext.gameSocket?.close()
-                gameContext.resetGame(gameContext)
-                await surrender(gameContext.gameId)
+                gameContext.gameSocket?.close();
+                gameContext.resetGame(gameContext);
+                await surrender(gameContext.gameId);
             }
         })
-    }, [authContext, gameContext.gameId])
+    }, [authContext, gameContext.gameId]);
     
     return (
         <>
@@ -128,7 +129,7 @@ const GameWithBot: FC = () => {
                     <ActionGameButton title={getLocalizedString(authContext, 'giveUp')} icon='../src/resources/assets/giveup.png' onClick={onClickGiveUp}/>
                 </div>
 
-                <BottomPanel activeVariant="games" socket={socketContext.ws.current!}/>
+                <BottomPanel activeVariant="games" socket={socketContext.ws.current!} gameId={gameContext.gameId}/>
                 <div className="game-shining" />
             </div>
         </>
@@ -137,9 +138,11 @@ const GameWithBot: FC = () => {
 
 const GameWithBotPage: FC = () => {
     return (
-        <SocketProvider>
-            <GameWithBot />
-        </SocketProvider>
+        <GameProvider>  
+            <SocketProvider>
+                <GameWithBot />
+            </SocketProvider>
+        </GameProvider>
     )
 };
 

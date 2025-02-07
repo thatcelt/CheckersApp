@@ -24,7 +24,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
         if (el) el.classList.add('notification-closing');
         setNotifications(p => p.filter((_, i) => i !== index));
         setCurrentNotify(null);
-    }, [])
+    }, []);
 
     useEffect(() => {
         setTimeout(() => {

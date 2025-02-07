@@ -1,10 +1,9 @@
-import { FC } from "react";
+import { FC } from 'react';
 import '../styles/RatingCard.css'
-import { RatingCardProps } from "../props/ratingCardProps";
+import { RatingCardProps } from '../props/ratingCardProps';
 
 const RatingCard: FC<RatingCardProps> = ({avatar, nickname, scores, index}) => {
     if(nickname.length > 15) nickname = nickname.slice(0, 12) + '...';
-    
     return (
         <>
         <div
@@ -30,6 +29,6 @@ const RatingCard: FC<RatingCardProps> = ({avatar, nickname, scores, index}) => {
         </div>
         </>
     )
-}
+};
 
-export default RatingCard
+export default RatingCard;

@@ -1,8 +1,8 @@
-import { FC, memo, useEffect } from "react";
-import "../styles/Desk.css";
-import { useGame } from "../hooks/useGame";
-import { DESK_MATRIX } from "../utils/constants";
-import { CellRow } from "./CellRow";
+import { FC, memo, useEffect } from 'react';
+import '../styles/Desk.css';
+import { useGame } from '../hooks/useGame';
+import { DESK_MATRIX } from '../utils/constants';
+import { CellRow } from './CellRow';
 
 const Desk: FC = () => {
     const gameContext = useGame();

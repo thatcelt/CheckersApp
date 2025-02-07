@@ -1,6 +1,6 @@
 import { PlayerData } from '../context/types';
 
-export const API_URL = 'pln4c2t3-3000.euw.devtunnels.ms';
+export const API_URL = '4nl8hqj7-3000.euw.devtunnels.ms';
 export const SUPPORT_URL = 'https://t.me/happygames_support';
 export const BOT_URL = 'https://t.me/HappyGamessBot'
 
@@ -45,7 +45,7 @@ export const BOT_PLAYER_DATA: PlayerData = {
     nickname: 'Bot',
     avatar: '../src/resources/assets/bot.svg',
     type: 'bot',
-    objectId: "2"
+    objectId: '2'
 }
 export const RIGHT_BACKLIGHTS = new Map()
     .set('black', 2)

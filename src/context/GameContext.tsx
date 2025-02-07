@@ -52,9 +52,8 @@ const GameProvider: FC<{ children: ReactNode }> = ({ children }) => {
         gameContext.setChipsColor(1);
         gameContext.setCurrentTurn(1);
         gameContext.setGameSocket(null);
-        if (gameContext.gameSocket?.readyState === WebSocket.OPEN) {
+        if (gameContext.gameSocket?.readyState === WebSocket.OPEN)
             gameContext.gameSocket.close();
-        }
         gameContext.setActivePiece(null);
         gameContext.setPlayers([]);
         gameContext.setEarnedWhiteChips(0);

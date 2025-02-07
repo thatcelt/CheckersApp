@@ -29,8 +29,7 @@ const GameSelectingPage: FC = () => {
         if (!game || game.message !== 'GAME_CREATED')
             return;
 
-        const invite = await invitePlayer(friendId, game.gameId)
-        console.log('картель: вызван', invite);
+        await invitePlayer(friendId, game.gameId)
 
         modalController.closeModal();
         navigate('/play-with-invited', { state: { gameId: game.gameId, isCreator: true } });

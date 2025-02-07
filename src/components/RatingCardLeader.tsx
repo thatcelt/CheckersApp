@@ -1,13 +1,15 @@
-import { FC } from "react";
-import { RatingCardProps } from "../props/ratingCardProps";
+import { FC } from 'react';
+import { RatingCardProps } from '../props/ratingCardProps';
 
 const RatingLeaderCard: FC<RatingCardProps> = ({avatar, nickname, scores, index}) => {
-    const cupPath = `../src/resources/assets/${index + 1}.png`
+    const cupPath = `../src/resources/assets/${index + 1}.png`;
     const placeColors = new Map()
         .set(0, '#FFB835')
         .set(1, '#FCD385')
-        .set(2, '#FAE0B1')
-    if (nickname.length > 15) nickname = nickname.slice(0, 12) + '...';
+        .set(2, '#FAE0B1');
+
+    if (nickname.length > 15) 
+        nickname = nickname.slice(0, 12) + '...';
 
     return (
         <>
@@ -39,6 +41,6 @@ const RatingLeaderCard: FC<RatingCardProps> = ({avatar, nickname, scores, index}
         </div>
         </>
     )
-}
+};
 
-export default RatingLeaderCard
+export default RatingLeaderCard;

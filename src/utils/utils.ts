@@ -1,15 +1,16 @@
-import { AuthorizationContextType, GameContextType } from "../context/types";
-import { LanguageTranslations, Translations } from "./types";
-import translations from "../resources/locales/locales.json";
-import { MutableRefObject, SetStateAction } from "react";
+import { AuthorizationContextType, GameContextType } from '../context/types';
+import { LanguageTranslations, Translations } from './types';
+import translations from '../resources/locales/locales.json';
+import { MutableRefObject, SetStateAction } from 'react';
 
 export function getLocalizedString(authContextOrLanguage: AuthorizationContextType | string, key: keyof LanguageTranslations): string  {
-    let choosenLanguage
-    if(typeof authContextOrLanguage == "string") {
-        choosenLanguage = authContextOrLanguage
-    } else {
-        choosenLanguage = authContextOrLanguage.user?.language
-    }
+    let choosenLanguage;
+
+    if (typeof authContextOrLanguage == 'string')
+        choosenLanguage = authContextOrLanguage;
+    else
+        choosenLanguage = authContextOrLanguage.user?.language;
+    
     const lang = choosenLanguage as keyof Translations;
     // @ts-ignore
     return translations[lang][key];

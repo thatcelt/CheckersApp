@@ -1,4 +1,4 @@
-import { API_URL } from "./constants";
+import { API_URL } from './constants';
 import { AuthorizeResponse, DifficultyType } from './types';
 
 // user routes
@@ -92,43 +92,31 @@ export async function changeSettings(changeData: { possibleMoves?: boolean, vibr
     }
 }   
 
-export function connectOnlineSocket(onMessage: (message: any) => void) {
-    const onlineSocket = new WebSocket(`wss://${API_URL}/api/v1/user/online?token=${token}`);
-    let pingInterval: NodeJS.Timeout | undefined
-    let pongReceived = true;
+export function connectOnlineSocket(specificToken: string, onMessage: (message: any) => void) {
+    const connect = () => {
+        const onlineSocket = new WebSocket(`wss://${API_URL}/api/v1/user/online?token=${specificToken}`);
 
-    onlineSocket.onopen = () => {
-        console.log('Websocket is connected');
-        pingInterval = setInterval(() => {
-            if (pongReceived) {
-                onlineSocket.send(JSON.stringify({ type: 'ping' }));
-                pongReceived = false;
-            } else {
-                console.error('WebSocket heartbeat failed. Closing connection.');
-                onlineSocket.close();
-            }
-        }, 30000);
-    };
+        onlineSocket.onopen = () => {
+            console.log('Websocket is connected');
+        };
 
-    onlineSocket.onerror = (error) => {
-        console.error('WebSocket error:', error);
-    };
+        onlineSocket.onerror = (error) => {
+            console.error('WebSocket error:', error);
+        };
 
-    onlineSocket.onclose = () => {
-        console.log('Websocket is closed');
-        clearInterval(pingInterval);
-    };
+        onlineSocket.onclose = () => {
+            console.log('Websocket is closed');
+            connect()
+        };
 
-    onlineSocket.onmessage = (packet) => {
-        const message = JSON.parse(packet.data);
-        onMessage(message);
+        onlineSocket.onmessage = (packet) => {
+            const message = JSON.parse(packet.data);
+            onMessage(message);
+        };
+        return onlineSocket
+    }
 
-        if (message.type === 'pong') {
-            pongReceived = true;
-        }
-    };
-
-    return onlineSocket;
+    return connect();
 }
 
 // game routes
@@ -313,7 +301,6 @@ export async function acceptInvite(gameId: string) {
     const response = await fetch(`https://${API_URL}/api/v1/game/acceptInvite/${gameId}`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
             'Authorization': token
         }
     })
@@ -329,7 +316,6 @@ export async function rejectInvite(gameId: string) {
     const response = await fetch(`https://${API_URL}/api/v1/game/rejectInvite/${gameId}`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
             'Authorization': token
         }
     })

@@ -1,10 +1,9 @@
-import { FC, memo } from "react";
-import { useAuthorization } from "../hooks/useAuthorization";
-import { getLocalizedString } from "../utils/utils";
+import { FC, memo } from 'react';
+import { useAuthorization } from '../hooks/useAuthorization';
+import { getLocalizedString } from '../utils/utils';
 
 const ProfileCard: FC<{ profilePicture?: string, nickname?: string, username?: string, registrationDate?: string }> = ({profilePicture, nickname, username, registrationDate}) => {
-    const authContext = useAuthorization()
-
+    const authContext = useAuthorization();
     return (
         <div className="profile-card animated">
             <img
@@ -21,6 +20,6 @@ const ProfileCard: FC<{ profilePicture?: string, nickname?: string, username?: s
             </div>
         </div>
     )
-}
+};
 
 export default memo(ProfileCard);

@@ -23,6 +23,6 @@ const FriendCard: FC<FriendCardProps> = ({avatar, nickname, scores, width, onCli
             </div>
         </>
     )
-}
+};
 
-export default FriendCard
+export default FriendCard;

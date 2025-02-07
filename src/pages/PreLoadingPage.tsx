@@ -8,11 +8,15 @@ const PreLoadingPage: FC<{ children: ReactNode }> = ({ children }) => {
         () => import('./PreLoadingPage.tsx'),
         () => import('./LevelSelectingPage.tsx'),
         () => import('./GamesPage.tsx'),
+        () => import('./GameSelectingPage'),
         () => import('./GameOnlinePage.tsx'),
+        () => import('./GameOnOneDevicePage.tsx'),
         () => import('./GameWithBotPage.tsx'),
+        () => import('./GameWithInvitedPage.tsx'),
         () => import('./ProfilePage.tsx'),
         () => import('./RatingPage.tsx'),
-        () => import('./FriendsPage.tsx')
+        () => import('./FriendsPage.tsx'),
+        () => import('./SettingsPage.tsx')
     ];
 
     let isLoading = false;

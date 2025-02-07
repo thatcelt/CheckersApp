@@ -7,23 +7,25 @@ import '../styles/CellRow.css'
 export const CellRow: FC<{ elementInRow: number[], row: number }> = ({elementInRow, row}) => {
 
     const currentCellColor = useCallback((element: number): string => {
-        if(WHITE_CELLS.includes(element)) {
-            return "#FFFFFF"
-        } else return "#7B7B7B"
-    }, [])
+        if (WHITE_CELLS.includes(element))
+            return '#FFFFFF';
+        else 
+            return '#7B7B7B';
+    }, []);
 
     const currentChip = useCallback((element: number): string => {
-        if(BLACK_POSITIONS.includes(element)) {
-            return BLACK_CHIP_IMAGE
-        } else if (WHITE_POSITIONS.includes(element)) {
-            return WHITE_CHIP_IMAGE
-        } else return EMPTY_IMAGE
-    }, [])
+        if (BLACK_POSITIONS.includes(element))
+            return BLACK_CHIP_IMAGE;
+        else if (WHITE_POSITIONS.includes(element))
+            return WHITE_CHIP_IMAGE;
+        else 
+            return EMPTY_IMAGE;
+    }, []);
     
     return (
         <>
-        <img src="..src/resources/assets/whiteking.png" style={{visibility: 'hidden', width: "0px", position: "absolute"}}/>
-        <img src="..src/resources/assets/blackking.png" style={{visibility: 'hidden', width: "0px", position: "absolute"}}/> 
+        <img src="..src/resources/assets/whiteking.png" style={{visibility: 'hidden', width: '0px', position: 'absolute' }}/>
+        <img src="..src/resources/assets/blackking.png" style={{visibility: 'hidden', width: '0px', position: 'absolute' }}/> 
         <div className="cells-row">
             {
                 elementInRow.map((element, index) => 
@@ -37,4 +39,4 @@ export const CellRow: FC<{ elementInRow: number[], row: number }> = ({elementInR
         </div>
         </>
     )
-}
+};

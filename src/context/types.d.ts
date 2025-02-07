@@ -5,7 +5,6 @@ export interface AuthorizationContextType {
     user: AuthorizeResponseUser | null;
     token: string;
     setUser: Dispatch<React.SetStateAction<AuthorizeResponseUser | null>>
-    onlineSocket: WebSocket | null;
 }
 
 export interface PlayerData {
@@ -56,6 +55,10 @@ export interface GameContextType {
     setPossibleMultipleMoves: React.Dispatch<React.SetStateAction<number[][]>>;
     resetGame: (gameContext: GameContextType) => void;
     handleMessage: (gameContext: GameContextType, message: string) => void;
+}
+
+export interface OnlineSocketContextType {
+    onlineSocket: WebSocket | null
 }
 
 export interface ModalConfig {

@@ -4,16 +4,16 @@ import { ModalProvider } from './context/ModalProvider.tsx';
 import { NotificationProvider } from './context/NotifyProvider.tsx';
 
 import AuthorizationProvider from './context/AuthorizationContext.tsx';
-import GameProvider from './context/GameContext.tsx'
 import PreLoadingPage from './pages/PreLoadingPage.tsx';
+import OnlineSocketProvider from './context/OnlineSocketContext.tsx'
 import './styles/App.css';
 
 const Profile = lazy(() => import('./pages/ProfilePage.tsx'));
-const Games = lazy(() => import("./pages/GamesPage.tsx"));
-const Rating = lazy(() => import("./pages/RatingPage.tsx"));
-const SelectLevel = lazy(() => import("./pages/LevelSelectingPage.tsx"));
-const GameWithBot = lazy(() => import("./pages/GameWithBotPage.tsx"));
-const GameWithPlayer = lazy(() => import("./pages/GameOnlinePage.tsx"));
+const Games = lazy(() => import('./pages/GamesPage.tsx'));
+const Rating = lazy(() => import('./pages/RatingPage.tsx'));
+const SelectLevel = lazy(() => import('./pages/LevelSelectingPage.tsx'));
+const GameWithBot = lazy(() => import('./pages/GameWithBotPage.tsx'));
+const GameWithPlayer = lazy(() => import('./pages/GameOnlinePage.tsx'));
 const Settings = lazy(() => import('./pages/SettingsPage.tsx'));
 const Friends = lazy(() => import('./pages/FriendsPage.tsx'));
 const GameOnOneDevice = lazy(() => import('./pages/GameOnOneDevicePage.tsx'));
@@ -26,8 +26,8 @@ const App: FC = () => {
 			<ModalProvider>
 				<NotificationProvider>
 						<AuthorizationProvider>
-							<GameProvider>
-								<PreLoadingPage>
+							<PreLoadingPage>
+								<OnlineSocketProvider>
 									<Suspense fallback={<div>Loading...</div>}>
 										<Routes>
 											<Route path='/' element={<Games/>}/>
@@ -44,8 +44,8 @@ const App: FC = () => {
 											<Route path='/select-game-type' element={<GamesSelecting/>}/>
 										</Routes>
 									</Suspense>
-								</PreLoadingPage>
-							</GameProvider>
+								</OnlineSocketProvider>
+							</PreLoadingPage>
 						</AuthorizationProvider>
 				</NotificationProvider>
 			</ModalProvider>

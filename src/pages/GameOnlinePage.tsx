@@ -1,18 +1,19 @@
-import { FC, memo, MutableRefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import PlayerCard from "../components/PlayerCard";
-import { useAuthorization } from "../hooks/useAuthorization";
-import { useGame } from "../hooks/useGame";
-import { enableTimer, getLocalizedString, updateActivePlayer } from "../utils/utils";
-import ChipsContainer from "../components/ChipsContainer";
-import ActionGameButton from "../components/ActionGameButton";
-import Desk from "../components/Desk";
-import BottomPanel from "../components/BottomPanel";
-import { joinGame, searchGame, surrender, token } from "../utils/apiWrapper";
-import { modalController } from "../context/ModalProvider";
-import '../styles/GameWithBotPage.css'
-import { useSocket } from "../hooks/useSocket";
-import { API_URL } from "../utils/constants";
-import SocketProvider from '../context/SocketContext'
+import { FC, memo, MutableRefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import PlayerCard from '../components/PlayerCard';
+import { useAuthorization } from '../hooks/useAuthorization';
+import { useGame } from '../hooks/useGame';
+import { enableTimer, getLocalizedString, updateActivePlayer } from '../utils/utils';
+import ChipsContainer from '../components/ChipsContainer';
+import ActionGameButton from '../components/ActionGameButton';
+import Desk from '../components/Desk';
+import BottomPanel from '../components/BottomPanel';
+import { joinGame, searchGame, surrender, token } from '../utils/apiWrapper';
+import { modalController } from '../context/ModalProvider';;
+import '../styles/GameWithBotPage.css';
+import { useSocket } from '../hooks/useSocket';
+import { API_URL } from '../utils/constants';
+import SocketProvider from '../context/SocketContext';
+import GameProvider from '../context/GameContext'
 
 const GameOnline: FC = () => {
     const authContext = useAuthorization();
@@ -46,13 +47,14 @@ const GameOnline: FC = () => {
 
     const createGame = useCallback(async () => {
         try {
-            gameContext.resetGame(gameContext)
+            gameContext.resetGame(gameContext);
             const result = await searchGame();
     
             if (result && result.message === 'GAME_IS_FOUND') {
                 const joinResults = await joinGame(result.gameId);
                 const deskContainer = document.getElementById('desk-view');
                 if (deskContainer) deskContainer.style.rotate = '180deg';
+
                 players = [
                     {
                         nickname: joinResults.game.players[0].username,
@@ -68,6 +70,7 @@ const GameOnline: FC = () => {
                         type: 'player2'
                     }
                 ];
+
                 gameContext.setPlayers(players);
                 gameContext.setGameId(result.gameId);
                 socketContext.setWebSocketURI(`wss://${API_URL}/api/v1/game?gameId=${result.gameId}&token=${token}`);
@@ -90,11 +93,9 @@ const GameOnline: FC = () => {
     }, [createGame, players]);
 
     useEffect(() => {
-        if(gameContext.gameId) {
-            //socketContext.setOnMessageHandler(gameContext.handleMessage);
-            //socketContext.setWebSocketURI(`wss://${API_URL}/api/v1/game?gameId=${gameContext.gameId}&token=${token}`);
+        if(gameContext.gameId)
             updateActivePlayer(gameContext.currentTurn, playersContainers);
-        }
+
         return () => {
             setTimerEnableFlag(false);
             if (timerIntervalRef.current) {
@@ -127,17 +128,17 @@ const GameOnline: FC = () => {
     }, [gameContext.currentTurn]);
 
     const onClickGiveUp = useCallback(() => {
-            modalController.createModal({
-                title: getLocalizedString(authContext, 'giveUp'),
-                message: getLocalizedString(authContext, 'areYouSureGiveUp'),
-                button1: getLocalizedString(authContext, 'confirm'),
-                button2: getLocalizedString(authContext, 'cancel'),
-                onButton1Submit: async () => {
-                    gameContext.gameSocket?.close()
-                    await surrender(gameContext.gameId)
-                }
-            })
-        }, [authContext, gameContext.gameId])
+        modalController.createModal({
+            title: getLocalizedString(authContext, 'giveUp'),
+            message: getLocalizedString(authContext, 'areYouSureGiveUp'),
+            button1: getLocalizedString(authContext, 'confirm'),
+            button2: getLocalizedString(authContext, 'cancel'),
+            onButton1Submit: async () => {
+                gameContext.gameSocket?.close();
+                await surrender(gameContext.gameId);
+            }
+        });
+    }, [authContext, gameContext.gameId]);
 
     return (
         <>
@@ -162,18 +163,20 @@ const GameOnline: FC = () => {
                     <ActionGameButton title={getLocalizedString(authContext, 'giveUp')} icon='../src/resources/assets/giveup.png' onClick={onClickGiveUp}/>
                 </div>
 
-                <BottomPanel activeVariant="games" socket={socketContext.ws.current!}/>
+                <BottomPanel activeVariant="games" socket={socketContext.ws.current!} gameId={gameContext.gameId}/>
                 <div className="game-shining" />
             </div>
         </>
     )
-}
+};
 
 const GameOnlinePage: FC = () => {
     return (
-        <SocketProvider>
-            <GameOnline />
-        </SocketProvider>
+        <GameProvider>  
+            <SocketProvider>
+                <GameOnline />
+            </SocketProvider>
+        </GameProvider>
     )
 };
 
