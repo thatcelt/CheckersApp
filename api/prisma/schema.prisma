@@ -15,6 +15,7 @@ datasource db {
 
 model User {
   userId           String       @id @unique
+  userTag          String
   username         String
   language         String       @default("en")
   profilePicture   String

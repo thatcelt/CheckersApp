@@ -26,8 +26,10 @@ const ProfilePage: FC = () => {
         setUserData({
             user: userResults.user,
             gameHistory: userResults.gameHistory
-        })
-        if (userResults.user.username.length > 12) userData!.user.username = userResults.user.username.slice(0, 12) + "...";
+        });
+
+        if (userResults.user.username.length > 12) 
+            userData!.user.username = userResults.user.username.slice(0, 12) + '...';
     }, [userData]);
 
     useEffect(() => {
@@ -42,7 +44,7 @@ const ProfilePage: FC = () => {
                 </div>
             </div>
             <div className="profile-container">
-                <ProfileCard nickname={userData?.user.username} username={userData?.user.username} registrationDate={userData?.user.registrationDate!} profilePicture={userData?.user.profilePicture!}/>
+                <ProfileCard nickname={userData?.user.username} username={userData?.user.userTag} registrationDate={userData?.user.registrationDate!} profilePicture={userData?.user.profilePicture!}/>
                 <ProfileStatistics playedGames={userData?.gameHistory}/>
                 <div className="game-history animated">
                     <div className="history-title-container">

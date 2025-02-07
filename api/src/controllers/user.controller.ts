@@ -1,7 +1,7 @@
 import prisma from '../utils/prisma';
 import { verifyTelegramWebAppData } from '../utils/checker';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { EditProfileRequestPayload, changeSettingsRequestPayload, GetUserParams, TelegramUser, OnlineWebsocketPayload, User } from './types';
+import { EditProfileRequestPayload, changeSettingsRequestPayload, GetUserParams, TelegramUser, OnlineWebsocketPayload } from './types';
 import { WebSocket } from '@fastify/websocket';
 import { inGameCache, usersCache } from '../constants';
 import app from '../utils/app';
@@ -58,6 +58,7 @@ export async function authorize(request: FastifyRequest, reply: FastifyReply) {
                     userId: telegramUser.id,
                     username: `${telegramUser.first_name} ${telegramUser.last_name}`,
                     profilePicture: telegramUser.photo_url, 
+                    userTag: telegramUser.username,
                     registrationDate: Date.now().toString()
                 }
             })

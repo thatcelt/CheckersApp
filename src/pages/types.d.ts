@@ -1,4 +1,5 @@
 export interface UserData {
+    userTag?: string;
     username: string;
     registrationDate: string;
     profilePicture: string;

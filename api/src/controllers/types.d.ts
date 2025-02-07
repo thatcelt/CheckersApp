@@ -78,10 +78,11 @@ export interface InvitePlayerRequestBody {
 }
 
 export type TelegramUser = {
-    id: string
-    first_name: string 
-    last_name: string
-    photo_url: string
+    username: string;
+    id: string;
+    first_name: string; 
+    last_name: string;
+    photo_url: string;
 }
 
 export type GetFriendRequestParams = { state: string }
