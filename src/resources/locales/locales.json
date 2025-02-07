@@ -1,5 +1,6 @@
 {
     "en": {
+      "inviteFailedOffline": "Player is offline",
       "checkersTitle": "Checkers",
       "friends": "Friends",
       "rating": "Rating",
@@ -186,14 +187,16 @@
       "WHITE": "Белые",
       "inviteFailed": "Не удалось отправить приглашение",
       "inviteFailedDescription": "Вы или соперник уже находятся в игре",
+      "inviteFailedOffline": "Игрок не в сети",
       "back": "Назад",
       "noFriends": "Никого нет в сети",
       "OPPONENT_DISCONNECTED": "Оппонент вышел",
       "AI_YOU_ARE_NO_POSSIBLE_MOVES": "Закончились фигуры или нет возможных ходов",
       "search": "Поиск"
-    },
+    }, 
   
     "ua": {
+      "inviteFailedOffline": "Гравець не в мережі",
       "checkersTitle": "Шашки",
       "exitMenu": "Вийти до меню",
       "soonGames": "Незабаром будуть нові ігри",

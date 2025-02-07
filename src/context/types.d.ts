@@ -1,5 +1,5 @@
-import React, { Dispatch } from "react";
-import { AuthorizeResponseUser } from "../utils/types";
+import React, { Dispatch } from 'react';
+import { AuthorizeResponseUser } from '../utils/types';
 
 export interface AuthorizationContextType {
     user: AuthorizeResponseUser | null;
@@ -20,7 +20,6 @@ export interface SocketContextType {
     setWebSocketURI: Dispatch<React.SetStateAction<string | null>>
     setOnMessageHandler: Dispatch<SetStateAction<(gameContext: GameContextType, message: string) => void | null>>
     send: (message: any) => void;
-
 }
 
 export interface GameContextType {

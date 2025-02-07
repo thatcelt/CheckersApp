@@ -6,7 +6,7 @@ import BottomPanel from '../components/BottomPanel';
 import { getLocalizedString } from '../utils/utils';
 import SelectingVariant from '../components/SelectingVariant';
 import { modalController } from '../context/ModalProvider';
-import { getFriends, createGame, invitePlayer } from '../utils/apiWrapper';
+import { getFriends, invitePlayer } from '../utils/apiWrapper';
 import FriendCard from '../components/FriendCard';
 
 const GameSelectingPage: FC = () => {
@@ -24,15 +24,29 @@ const GameSelectingPage: FC = () => {
     }, []);
 
     const inviteFriend = async (friendId: string) => {
-        const game = await createGame('private');
-
-        if (!game || game.message !== 'GAME_CREATED')
-            return;
-
-        await invitePlayer(friendId, game.gameId)
-
         modalController.closeModal();
-        navigate('/play-with-invited', { state: { gameId: game.gameId, isCreator: true } });
+
+        const result = await invitePlayer(friendId);
+        switch (result.message) {
+            case 'FRIEND_ALREADY_IN_GAME':
+            case 'YOU_ARE_ALREADY_IN_GAME':
+                modalController.createModal({
+                    title: getLocalizedString(authContext, 'inviteFailed'),
+                    message: getLocalizedString(authContext, 'inviteFailedDescription')
+                });
+                break;
+
+            case 'FRIEND_IS_OFFLINE':
+                modalController.createModal({
+                    title: getLocalizedString(authContext, 'inviteFailed'),
+                    message: getLocalizedString(authContext, 'inviteFailedOffline')
+                });
+                break;
+
+            case 'INVITE_REQUESTED':
+                navigate('/play-with-invited', { state: { gameId: result.game, isCreator: true } });
+                break;
+        }
     };
 
     const openInviteFriendModal = () => {
@@ -40,7 +54,8 @@ const GameSelectingPage: FC = () => {
             title: getLocalizedString(authContext, 'inviteFriends'),
             body: (
                 <div className="invite-friends-container">
-                    <div className="active-friends-list">
+                    {friendsList.length ? (
+                        <div className="active-friends-list">
                         {friendsList.map((friend, index) => (
                             <FriendCard
                                 avatar={friend.profilePicture || '/assets/bot.svg'}
@@ -52,6 +67,9 @@ const GameSelectingPage: FC = () => {
                             />
                         ))}
                     </div>
+                    ) : (
+                        <div className="not-online"><span>{getLocalizedString(authContext, 'noFriends')}</span></div>
+                    )}
                 </div> 
             ),
             message: '',

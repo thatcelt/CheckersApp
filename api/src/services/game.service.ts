@@ -151,7 +151,6 @@ export async function surrenderGame(game: CachedGame, surrenderer: string) {
     if (!game) return;
 
     if (game.players.length < 2) {
-        console.log('cleanup)')
         inGameCache.get(game.players[0])?.close();
         inGameCache.delete(game.players[0]);
         gamesCache.delete(game.gameId);
@@ -205,13 +204,8 @@ export async function acceptDrawRequest(game: CachedGame, accepterId: string) {
     if (drawResult) await setGameResults(game.gameId, game.players, drawResult, true);
 }
 
-export async function invitePlayerRequest(reply: FastifyReply, game: CachedGame, inviterId: string, playerId: string) {
-    if (inGameCache.get(playerId))
-        return reply.code(400).send({ message: 'FRIEND_ALREADY_IN_GAME' });
-
-    const onlineSocket = usersCache.get(playerId)
-    if (!onlineSocket)
-        return reply.code(400).send({ message: 'FRIEND_IS_OFFLINE' })
+export async function invitePlayerRequest(game: CachedGame, inviterId: string, playerId: string) {
+    const onlineSocket = usersCache.get(playerId);
 
     const inviterUser = await prisma.user.findUniqueOrThrow({
         where: {

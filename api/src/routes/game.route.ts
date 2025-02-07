@@ -13,7 +13,7 @@ export const gameRoutes = (app: FastifyInstance) => {
     app.post<{ Params: GameParams }>('/joinGame/:gameId', joinGame);
     app.post<{ Params: GameParams }>('/surrender/:gameId', surrender);
     app.post<{ Params: GameParams }>('/drawRequest/:gameId', drawRequest);
-    app.post<{ Params: GameParams, Body: InvitePlayerRequestBody }>('/invitePlayer/:gameId', invitePlayer);
+    app.post<{ Body: InvitePlayerRequestBody }>('/invitePlayer', invitePlayer);
     app.post<{ Params: GameParams }>('/acceptInvite/:gameId', acceptInvite);
     app.post<{ Params: GameParams }>('/rejectInvite/:gameId', rejectInvite);
 }

@@ -81,13 +81,27 @@ const GameProvider: FC<{ children: ReactNode }> = ({ children }) => {
                     navigate('/games');
                     await new Promise(r => setTimeout(() => r(true), 1000));
                 
-                    const game = await createGame('private');
-                    if (!game || game.message !== 'GAME_CREATED')
-                        return;
-                    
-                    console.log(gameContext.players, '=', target)
-                    await invitePlayer(target[0].userId!, game.gameId);
-                    navigate('/play-with-invited', { state: { gameId: game.gameId, isCreator: true } });
+                    const result = await invitePlayer(target[0].userId!);
+                    switch (result.message) {
+                        case 'FRIEND_ALREADY_IN_GAME':
+                        case 'YOU_ARE_ALREADY_IN_GAME':
+                            modalController.createModal({
+                                title: getLocalizedString(authContext, 'inviteFailed'),
+                                message: getLocalizedString(authContext, 'inviteFailedDescription')
+                            });
+                            break;
+
+                        case 'FRIEND_IS_OFFLINE':
+                            modalController.createModal({
+                                title: getLocalizedString(authContext, 'inviteFailed'),
+                                message: getLocalizedString(authContext, 'inviteFailedOffline')
+                            });
+                            break;
+
+                        case 'INVITE_REQUESTED':
+                            navigate('/play-with-invited', { state: { gameId: result.game, isCreator: true } });
+                            break;
+                    }
                 },
                 onButton2Submit: async () => {
                     gameSocket?.close();

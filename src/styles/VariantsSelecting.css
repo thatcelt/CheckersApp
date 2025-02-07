@@ -52,6 +52,13 @@
     height: 300px;
 }
 
+.not-online {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
 .active-friends-list {
     display: flex;
     flex-direction: column;

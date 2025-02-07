@@ -7,7 +7,7 @@ import { Game, Piece, Turn } from '../utils/game';
 import { WebSocket } from '@fastify/websocket';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { gameSendMessages, getGameFromRequest, getGameFromSocket } from '../utils/utils';
-import { drawTimeoutValue, emptyBoard, gamesCache, GameTypes, inGameCache, maxPlayers, pendingInvites } from '../constants';
+import { drawTimeoutValue, emptyBoard, gamesCache, GameTypes, inGameCache, maxPlayers, pendingInvites, usersCache } from '../constants';
 import { acceptDrawRequest, drawGameRequest, invitePlayerRequest, acceptInviteRequest, rejectInviteRequest, makeMove, makeMoveWithBot, searchGameRequest, surrenderGame } from '../services/game.service';
 import { CreateGameRequestPayload, GameParams, InvitePlayerRequestBody, OnlineGameWebsocketMessage, BotGameWebsocketMessage, GameWebsocketPayload, CreateGameWithBotRequestPayload } from './types';
 
@@ -124,17 +124,24 @@ export async function drawRequest(request: FastifyRequest<{ Params: GameParams }
     return reply.code(200).send({ message: 'DRAW_REQUESTED' });
 }
 
-export async function invitePlayer(request: FastifyRequest<{ Params: GameParams, Body: InvitePlayerRequestBody }>, reply: FastifyReply) {
+export async function invitePlayer(request: FastifyRequest<{ Body: InvitePlayerRequestBody }>, reply: FastifyReply) {
     const decodedToken: { userId: string } = await request.jwtDecode();
-    const game = getGameFromRequest(reply, gamesCache.get(request.params.gameId), decodedToken.userId);
+   
+    if (inGameCache.get(request.body.playerId))
+        return reply.code(400).send({ message: 'FRIEND_ALREADY_IN_GAME' });
+    if (!usersCache.get(request.body.playerId))
+        return reply.code(400).send({ message: 'FRIEND_IS_OFFLINE' });
+    if (inGameCache.has(decodedToken.userId)) 
+        return reply.status(400).send({ message: 'YOU_ALREADY_IN_GAME' });
 
-    if (game!.gameType != 'private') 
-        return reply.status(403).send({ message: 'FORBIDDEN' });
-    if (game!.players.length == maxPlayers) 
-        return reply.status(400).send({ message: 'GAME_IS_FULL' });
+    const game = new Game(emptyBoard);
+    const gameId = uuidv4();
+    const userData = await prisma.user.findUniqueOrThrow({ where: { userId: decodedToken.userId }});
 
-    await invitePlayerRequest(reply, game!, decodedToken.userId, request.body.playerId);
-    return reply.code(200).send({ message: 'INVITE_REQUESTED' });
+    gamesCache.set(gameId, { gameId: gameId, players: [decodedToken.userId], game, drawTime: 0, gameType: 'private', creatorScores: userData.scores });
+
+    await invitePlayerRequest(gamesCache.get(gameId)!, decodedToken.userId, request.body.playerId);
+    return reply.code(200).send({ message: 'INVITE_REQUESTED', game: gameId });
 }
 
 export async function acceptInvite(request: FastifyRequest<{ Params: GameParams }>, reply: FastifyReply) {
@@ -205,9 +212,12 @@ export async function onlineGameWebsocket(socket: WebSocket, request: GameWebsoc
     }
 
     socket.on('close', async () => {
-        console.log('game cleanup', game?.gameId && !game.winner)
         if (game && !game.winner)
             await surrenderGame(game, decodedToken.userId)
+        else {
+            console.log('Не удалось завершить игру для', decodedToken.userId, 'делаем это насильно');
+            inGameCache.delete(decodedToken.userId);
+        }
     });
 
     socket.on('message', async message => {

@@ -16,6 +16,7 @@ export interface AuthorizeResponse {
 };
 
 export interface LanguageTranslations {
+    inviteFailedOffline: string;
     checkersTitle: string;
     friends: string;
     rating: string;

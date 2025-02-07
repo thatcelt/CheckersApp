@@ -278,8 +278,8 @@ export async function drawRequest(gameId: string) {
     }
 }
 
-export async function invitePlayer(userId: string, gameId: string) {
-    const response = await fetch(`https://${API_URL}/api/v1/game/invitePlayer/${gameId}`, {
+export async function invitePlayer(userId: string) {
+    const response = await fetch(`https://${API_URL}/api/v1/game/invitePlayer`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -294,6 +294,7 @@ export async function invitePlayer(userId: string, gameId: string) {
     } else {
         const errorData = await response.json();
         console.log(`Exception ${errorData.detail}`);
+        return errorData;
     }
 }
 
