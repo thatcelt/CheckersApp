@@ -30,8 +30,8 @@ async def add_user_if_referral(message: Message, referral: str):
             isUserExists = await cursor.fetchone() is not None;
 
             if not isUserExists:
-                await cursor.execute('INSERT INTO user (userId, username, profilePicture, registrationDate) VALUES (%s, %s, %s, %s)',
-                    (message.from_user.id, message.from_user.full_name, 'https://t.me/i/userpic/320/mUFEw-MTKoo887DrxDGa3xiBpfMb4UCd_hISYR8U0ss.svg', str(time.time() * 1000)));
+                await cursor.execute('INSERT INTO user (userId, userTag, username, profilePicture, registrationDate) VALUES (%s, %s, %s, %s, %s)',
+                    (message.from_user.id, "", message.from_user.full_name, "", str(time.time() * 1000)));
                 await connection.commit();
             
             await cursor.execute('SELECT 1 FROM friendship WHERE (userId = %s AND friendId = %s) OR (userId = %s AND friendId = %s) LIMIT 1', (referral, message.from_user.id, message.from_user.id, referral));

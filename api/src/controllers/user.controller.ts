@@ -62,7 +62,7 @@ export async function authorize(request: FastifyRequest, reply: FastifyReply) {
                     registrationDate: Date.now().toString()
                 }
             })
-        } else {
+        } else if (user.profilePicture !== telegramUser.photo_url) {
             await prisma.user.update({
                 data: {
                     profilePicture: telegramUser.photo_url
@@ -70,13 +70,13 @@ export async function authorize(request: FastifyRequest, reply: FastifyReply) {
                 where: {
                     userId: telegramUser.id
                 }
-            })
+            });
         }
 
         const token = await reply.jwtSign(user); 
         return reply.status(200).send({ message: 'USER_AUTHORIZED', user: user, accessToken: token });
     } else {
-        return reply.code(400).send({ message: "INVALID_WEB_APP_INIT_DATA" });
+        return reply.code(400).send({ message: 'INVALID_WEB_APP_INIT_DATA' });
     }
 }
 
