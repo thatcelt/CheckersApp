@@ -269,7 +269,7 @@ export async function botGameWebSocket(socket: WebSocket, request: GameWebsocket
         switch (parsedMessage.action) {
             case 'MOVE': {
                 await makeMove(socket, game, parsedMessage, decodedToken.userId);
-                setTimeout(async () => await makeMoveWithBot(socket, game, parsedMessage, decodedToken.userId), 1000);
+                setTimeout(async () => await makeMoveWithBot(socket, game), 1000);
                 break;
             }
             

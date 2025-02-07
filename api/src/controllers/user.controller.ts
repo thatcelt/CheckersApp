@@ -61,6 +61,15 @@ export async function authorize(request: FastifyRequest, reply: FastifyReply) {
                     registrationDate: Date.now().toString()
                 }
             })
+        } else {
+            await prisma.user.update({
+                data: {
+                    profilePicture: telegramUser.photo_url
+                },
+                where: {
+                    userId: telegramUser.id
+                }
+            })
         }
 
         const token = await reply.jwtSign(user); 
@@ -135,29 +144,15 @@ export async function onlineWebsocketConnect(socket: WebSocket, request: OnlineW
         socket.close();
         return;
     }
+    
     usersCache.set(decodedToken.userId, socket);
-
-    let lastPingTime = Date.now();
-
-    const checkHeartbeat = () => {
-        if (Date.now() - lastPingTime > 60000) { 
-            socket.close();
-        }
-    };
-
-    const heartbeatInterval = setInterval(checkHeartbeat, 30000);
 
     socket.on('message', (data) => {
         const message = JSON.parse(data.toString());
-
-        if (message.type === 'ping') {
-            lastPingTime = Date.now();
-            socket.send(JSON.stringify({ type: 'pong' }));
-        }
+        console.log(message)
     });
 
     socket.on('close', () => {
-        clearInterval(heartbeatInterval);
         usersCache.delete(decodedToken.userId);
         const gameSocket = inGameCache.get(decodedToken.userId);
         if (gameSocket) {

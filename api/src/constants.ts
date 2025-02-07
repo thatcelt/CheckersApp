@@ -15,6 +15,12 @@ export type CachedGame = {
     creatorScores: number
 };
 
+export type PendingInvite = {
+    invited: string;
+};
+
+export const pendingInvites: Map<string, PendingInvite> = new Map();
+
 export const drawTimeoutValue = 120;
 export const maxPlayers = 2;
 export const scoresSearchRange: number = 100;
@@ -22,6 +28,7 @@ export const playerPlaces: Map<string, number> = new Map();
 export const gamesCache: Map<string, CachedGame> = new Map();
 export const usersCache: Map<string, WebSocket> = new Map();
 export const inGameCache: Map<string, WebSocket> = new Map();
+
 export const jwtTokenErrors = {
     badRequestErrorMessage: 'BAD_REQUEST_ERROR',
     badCookieRequestErrorMessage: 'BAD_COOKIE_REQUEST_ERROR',

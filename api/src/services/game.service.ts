@@ -1,4 +1,4 @@
-import { CachedGame, drawTimeoutValue, emptyBoard, gamesCache, inGameCache, maxPlayers, playerPlaces, Turn, usersCache } from '../constants';
+import { CachedGame, drawTimeoutValue, emptyBoard, gamesCache, inGameCache, maxPlayers, playerPlaces, Turn, usersCache, pendingInvites } from '../constants';
 import { WebSocket } from '@fastify/websocket';
 import { OnlineGameWebsocketMessage } from '../controllers/types';
 import { gameSendMessages, isValidScores } from '../utils/utils';
@@ -88,11 +88,11 @@ export async function makeMove(socket: WebSocket, game: CachedGame, websocketMes
         const playerPlace = playerPlaces.get(checkedWinner);
         await setGameResults(game.gameId, game.players, game.players[playerPlace!], false);
     } else if (checkedWinner && game.players[1] == 'nothing') {
-        socket.close()
+        socket.close();
     }
 }
 
-export async function makeMoveWithBot(socket: WebSocket, game: CachedGame, websocketMessage: OnlineGameWebsocketMessage, userId: string) {
+export async function makeMoveWithBot(socket: WebSocket, game: CachedGame) {
     if (game.game.currentTurn != Turn.Black)
         return;
 
@@ -143,13 +143,21 @@ export async function makeMoveWithBot(socket: WebSocket, game: CachedGame, webso
     if (checkedWinner) {
         inGameCache.delete(game.players[0]);
         gamesCache.delete(game.gameId);
-        socket.close()
+        socket.close();
     }
 }
 
 export async function surrenderGame(game: CachedGame, surrenderer: string) {
-    if (!game) return
-    if (game.players.length < 2) return
+    if (!game) return;
+
+    if (game.players.length < 2) {
+        inGameCache.get(game.players[0])?.close();
+        inGameCache.delete(game.players[0]);
+        gamesCache.delete(game.gameId);
+        pendingInvites.delete(game.gameId);
+        return;
+    }
+    
     const checkedWinner = game.players.indexOf(surrenderer) + 1 == 1 ? 'BLACK' : 'WHITE';
 
     gameSendMessages(game.players, JSON.stringify({
@@ -214,10 +222,41 @@ export async function invitePlayerRequest(reply: FastifyReply, game: CachedGame,
         if (!onlineSocket)
             return reply.code(400).send({ message: 'FRIEND_IS_OFFLINE' })
 
+        const inviterUser = await prisma.user.findUniqueOrThrow({
+            where: {
+                userId: inviterId
+            }
+        });
+
+        pendingInvites.set(game.gameId, { invited: playerId });
+
+        setTimeout(async () => {
+            if (pendingInvites.has(game.gameId)) {
+                const invitedUser = await prisma.user.findUniqueOrThrow({
+                    where: {
+                        userId: playerId
+                    }
+                });
+
+                inGameCache.get(game.players[0])?.close();
+                inGameCache.delete(game.players[0]);
+                gamesCache.delete(game.gameId);
+                pendingInvites.delete(game.gameId);
+
+                usersCache.get(inviterId)?.send(JSON.stringify({
+                    t: 'INVITE_NOT_ACCEPTED',
+                    gameId: game.gameId,
+                    invitedId: playerId,
+                    inviterUsername: invitedUser.username
+                }));
+            }
+        }, 30000);
+
         onlineSocket?.send(JSON.stringify({
             t: 'INVITE',
             gameId: game.gameId,
-            inviterId: inviterId
+            inviterId: inviterId,
+            inviterUsername: inviterUser.username
         }));
     } catch (error) {
         return reply.code(403).send({ message: 'FORBIDDEN' });
@@ -241,6 +280,8 @@ export async function acceptInviteRequest(reply: FastifyReply, game: CachedGame,
         const onlineSocket = usersCache.get(game.players[0])
         if (!onlineSocket)
             return reply.code(400).send({ message: 'FRIEND_IS_OFFLINE' })
+
+        pendingInvites.delete(game.gameId);
 
         onlineSocket?.send(JSON.stringify({
             t: 'INVITE_ACCEPTED',
@@ -270,10 +311,23 @@ export async function rejectInviteRequest(reply: FastifyReply, game: CachedGame,
         if (!onlineSocket)
             return reply.code(400).send({ message: 'FRIEND_IS_OFFLINE' })
 
+        pendingInvites.delete(game.gameId);
+        
+        const inviterUser = await prisma.user.findUniqueOrThrow({
+            where: {
+                userId: game.players[0]
+            }
+        });
+
+        inGameCache.get(game.players[0])?.close();
+        inGameCache.delete(game.players[0]);
+        gamesCache.delete(game.gameId);
+
         onlineSocket?.send(JSON.stringify({
             t: 'INVITE_REJECTED',
             gameId: game.gameId,
-            inviterId: game.players[0]
+            inviterId: game.players[0],
+            inviterUsername: inviterUser.username
         }));
     } catch (error) {
         return reply.code(403).send({ message: 'FORBIDDEN' });

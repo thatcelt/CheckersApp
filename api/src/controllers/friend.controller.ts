@@ -1,6 +1,6 @@
 import { usersCache } from '../constants';
 import prisma from '../utils/prisma';
-import { FriendParams, GetFriendRequestParams, Friendship, User } from './types';
+import { FriendParams, GetFriendRequestParams } from './types';
 import { FastifyReply, FastifyRequest } from 'fastify';
 
 
@@ -50,12 +50,13 @@ export async function getFriends(request: FastifyRequest<{ Params: GetFriendRequ
         }
     });
 
-    const friends = friendships.map(friendship => friendship.friend.userId == decodedToken.userId ? friendship.user : friendship.friend)
+    let filtered = [];
+    const friends = friendships.map(friendship => friendship.friend.userId == decodedToken.userId ? friendship.user : friendship.friend);
     if (request.params.state == 'active')
-        friends.filter(friend => usersCache.has(friend.userId));
+        filtered = friends.filter(friend => usersCache.has(friend.userId));
     else
-        friends.filter(friend => !usersCache.has(friend.userId));
+        filtered = friends.filter(friend => !usersCache.has(friend.userId));
 
-    return reply.status(200).send({ message: 'FRIENDS_COLLECTED', friends: friends });
+    return reply.status(200).send({ message: 'FRIENDS_COLLECTED', friends: filtered });
 }
 
