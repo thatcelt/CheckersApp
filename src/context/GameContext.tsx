@@ -6,6 +6,7 @@ import { useAuthorization } from '../hooks/useAuthorization';
 import { modalController } from './ModalProvider';
 import { LanguageTranslations } from '../utils/types';
 import { useNavigate } from 'react-router-dom';
+import { createGame, invitePlayer } from '../utils/apiWrapper';
 
 export const GameContext = createContext<GameContextType | undefined>(undefined)
 
@@ -67,8 +68,28 @@ const GameProvider: FC<{ children: ReactNode }> = ({ children }) => {
             modalController.createModal({
                 title: `${getLocalizedString(authContext, 'resultsTitle')}: ${getLocalizedString(authContext, message.winner as keyof LanguageTranslations)}`,
                 message: getLocalizedString(authContext, message.reason as keyof LanguageTranslations),
-                button1: getLocalizedString(authContext, 'ok'),
+                button1: getLocalizedString(authContext, 'rematch'),
+                button2: getLocalizedString(authContext, 'ok'),
                 onButton1Submit: async () => {
+                    const target = gameContext.players.filter(x => x.userId !== authContext.user?.userId);
+                    if (!target?.length) return;
+
+                    gameSocket?.close();
+                    resetGame(gameContext);
+                    modalController.closeModal();
+
+                    navigate('/games');
+                    await new Promise(r => setTimeout(() => r(true), 1000));
+                
+                    const game = await createGame('private');
+                    if (!game || game.message !== 'GAME_CREATED')
+                        return;
+                    
+                    console.log(gameContext.players, '=', target)
+                    await invitePlayer(target[0].userId!, game.gameId);
+                    navigate('/play-with-invited', { state: { gameId: game.gameId, isCreator: true } });
+                },
+                onButton2Submit: async () => {
                     gameSocket?.close();
                     resetGame(gameContext);
                     navigate('/games');
@@ -84,6 +105,7 @@ const GameProvider: FC<{ children: ReactNode }> = ({ children }) => {
                 if (message.players) {
                     gameContext.setPlayers(
                         [{
+                            userId: message.players[0].userId,
                             nickname: message.players[0].username,
                             avatar: message.players[0].profilePicture,
                             objectId: 'joinedData',
@@ -91,6 +113,7 @@ const GameProvider: FC<{ children: ReactNode }> = ({ children }) => {
             
                         },
                         {
+                            userId: message.players[1].userId,
                             nickname: message.players[1].username,
                             avatar: message.players[1].profilePicture,
                             objectId: 'joinedData2',

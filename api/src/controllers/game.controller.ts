@@ -58,15 +58,13 @@ export async function joinGame(request: FastifyRequest<{ Params: GameParams }>, 
     const decodedToken: { userId: string } = await request.jwtDecode();
     if (inGameCache.has(decodedToken.userId)) return reply.status(400).send({message: 'YOU_ALREADY_IN_GAME'});
 
-    const game = gamesCache.get(request.params.gameId)
-
-    if (!game) {
-        return reply.status(404).send({message: 'GAME_IS_NOT_FOUND'})
-    }
-
-    if (game.players.includes(decodedToken.userId)) return reply.code(403).send({ message: 'FORBIDDEN' })
-
-    if (game.players.length == maxPlayers) return reply.status(400).send({message: 'GAME_IS_FULL' });
+    const game = gamesCache.get(request.params.gameId);
+    if (!game)
+        return reply.status(404).send({ message: 'GAME_IS_NOT_FOUND' });
+    if (game.players.includes(decodedToken.userId)) 
+        return reply.code(403).send({ message: 'FORBIDDEN' });
+    if (game.players.length == maxPlayers) 
+        return reply.status(400).send({message: 'GAME_IS_FULL' });
     
     game.players.push(decodedToken.userId);
     const playerData = await prisma.user.findUnique({ where: { userId: game?.players[0] } });
@@ -77,10 +75,12 @@ export async function joinGame(request: FastifyRequest<{ Params: GameParams }>, 
         possibleMoves: game.game.getAllValidMoves(Piece.WHITE_PIECE),
         players: [
             {
+                userId: playerData?.userId,
                 profilePicture: playerData?.profilePicture,
                 username: playerData?.username
             },
             {
+                userId: joinedPlayerData?.userId,
                 profilePicture: joinedPlayerData?.profilePicture,
                 username: joinedPlayerData?.username
             }
@@ -181,8 +181,8 @@ export async function onlineGameWebsocket(socket: WebSocket, request: GameWebsoc
     inGameCache.set(decodedToken.userId, socket);
     
     if (game?.players.length == maxPlayers) {
-        const playerData = await prisma.user.findUnique({ where: { userId: game?.players[0] } });
-        const joinedPlayerData = await prisma.user.findUnique({ where: { userId: game?.players[1] } });
+        const firstPlayerData = await prisma.user.findUnique({ where: { userId: game?.players[0] } });
+        const secondPlayerData = await prisma.user.findUnique({ where: { userId: game?.players[1] } });
 
         gameSendMessages(game.players, JSON.stringify({
             t: 'NEXT_MOVE',
@@ -191,18 +191,21 @@ export async function onlineGameWebsocket(socket: WebSocket, request: GameWebsoc
             currentTurn: game?.game.currentTurn,
             players: [
                 {
-                    profilePicture: playerData?.profilePicture,
-                    username: playerData?.username
+                    userId: firstPlayerData?.userId,
+                    profilePicture: firstPlayerData?.profilePicture,
+                    username: firstPlayerData?.username
                 },
                 {
-                    profilePicture: joinedPlayerData?.profilePicture,
-                    username: joinedPlayerData?.username
+                    userId: secondPlayerData?.userId,
+                    profilePicture: secondPlayerData?.profilePicture,
+                    username: secondPlayerData?.username
                 }
             ]
         }))
     }
 
     socket.on('close', async () => {
+        console.log('game cleanup', game?.gameId && !game.winner)
         if (game && !game.winner)
             await surrenderGame(game, decodedToken.userId)
     });

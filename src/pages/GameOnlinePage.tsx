@@ -30,6 +30,7 @@ const GameOnline: FC = () => {
     let players = useMemo(() => {
         return [
             {
+                userId: undefined,
                 nickname: authContext.user?.username,
                 avatar: authContext.user?.profilePicture,
                 objectId: '1',
@@ -37,6 +38,7 @@ const GameOnline: FC = () => {
 
             },
             {
+                userId: undefined,
                 nickname: getLocalizedString(authContext, 'search'),
                 avatar: '',
                 objectId: 'searching',
@@ -57,6 +59,7 @@ const GameOnline: FC = () => {
 
                 players = [
                     {
+                        userId: joinResults.game.players[0].userId,
                         nickname: joinResults.game.players[0].username,
                         avatar: joinResults.game.players[0].profilePicture,
                         objectId: 'joinedData',
@@ -64,6 +67,7 @@ const GameOnline: FC = () => {
         
                     },
                     {
+                        userId: joinResults.game.players[1].userId,
                         nickname: joinResults.game.players[1].username,
                         avatar: joinResults.game.players[1].profilePicture,
                         objectId: 'joinedData2',

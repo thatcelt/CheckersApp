@@ -19,7 +19,6 @@ import GameProvider from '../context/GameContext'
 const GameWithInvited: FC = () => {
     const location = useLocation();
     const { gameId, isCreator } = location.state || {};
-    console.log('gameId', gameId, 'isCreator', isCreator);
     const authContext = useAuthorization();
     const gameContext = useGame();
     const socketContext = useSocket();
@@ -34,6 +33,7 @@ const GameWithInvited: FC = () => {
     let players = useMemo(() => {
         return [
             {
+                userId: undefined,
                 nickname: authContext.user?.username,
                 avatar: authContext.user?.profilePicture,
                 objectId: '1',
@@ -41,6 +41,7 @@ const GameWithInvited: FC = () => {
 
             },
             {
+                userId: undefined,
                 nickname: getLocalizedString(authContext, 'search'),
                 avatar: '',
                 objectId: 'searching',
@@ -64,6 +65,7 @@ const GameWithInvited: FC = () => {
                 if (deskContainer) deskContainer.style.rotate = '180deg';
                 players = [
                     {
+                        userId: joinResults.game.players[0].userId,
                         nickname: joinResults.game.players[0].username,
                         avatar: joinResults.game.players[0].profilePicture,
                         objectId: 'joinedData',
@@ -71,6 +73,7 @@ const GameWithInvited: FC = () => {
         
                     },
                     {
+                        userId: joinResults.game.players[1].userId,
                         nickname: joinResults.game.players[1].username,
                         avatar: joinResults.game.players[1].profilePicture,
                         objectId: 'joinedData2',
@@ -95,8 +98,6 @@ const GameWithInvited: FC = () => {
 
     useEffect(() => {
         if(gameContext.gameId) {
-            //socketContext.setOnMessageHandler(gameContext.handleMessage);
-            //socketContext.setWebSocketURI(`wss://${API_URL}/api/v1/game?gameId=${gameContext.gameId}&token=${token}`);
             updateActivePlayer(gameContext.currentTurn, playersContainers);
         }
         return () => {
@@ -131,17 +132,17 @@ const GameWithInvited: FC = () => {
     }, [gameContext.currentTurn]);
 
     const onClickGiveUp = useCallback(() => {
-            modalController.createModal({
-                title: getLocalizedString(authContext, 'giveUp'),
-                message: getLocalizedString(authContext, 'areYouSureGiveUp'),
-                button1: getLocalizedString(authContext, 'confirm'),
-                button2: getLocalizedString(authContext, 'cancel'),
-                onButton1Submit: async () => {
-                    gameContext.gameSocket?.close()
-                    await surrender(gameContext.gameId)
-                }
-            })
-        }, [authContext, gameContext.gameId])
+        modalController.createModal({
+            title: getLocalizedString(authContext, 'giveUp'),
+            message: getLocalizedString(authContext, 'areYouSureGiveUp'),
+            button1: getLocalizedString(authContext, 'confirm'),
+            button2: getLocalizedString(authContext, 'cancel'),
+            onButton1Submit: async () => {
+                gameContext.gameSocket?.close();
+                await surrender(gameContext.gameId);
+            }
+        })
+    }, [authContext, gameContext.gameId]);
 
     return (
         <>

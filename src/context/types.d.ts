@@ -8,6 +8,7 @@ export interface AuthorizationContextType {
 }
 
 export interface PlayerData {
+    userId?: string | undefined;
     nickname: string | undefined;
     avatar: string | undefined;
     type: string;
