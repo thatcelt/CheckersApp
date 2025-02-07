@@ -27,7 +27,9 @@ const OnlineSocketProvider: FC<{ children: ReactNode }> = ({ children }) => {
                         button2: getLocalizedString(authContext, 'reject'),
                         onButton1Submit: () => {
                             acceptInvite(message.gameId)
-                                .then(x => x && {
+                                .then(result => {
+                                    console.log('result', result)
+                                    if (!result) return;
                                     navigate('/play-with-invited', { state: { gameId: message.gameId, isCreator: false } });
                                     modalController.closeModal();
                                 });

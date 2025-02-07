@@ -26,10 +26,11 @@ app.register(fastifyJwt, {
         extractToken: (request) => request.headers.authorization
     }
 });
+
 app.register(fastifyCors, {
     methods: ['POST', 'GET', 'PATCH', 'DELETE'],
-    origin: "*"
-})
+    origin: '*'
+});
 
 app.register(authMiddlewarePlugin);
 app.register(userRoutes, { prefix: '/api/v1/user' });
@@ -38,7 +39,7 @@ app.register(gameRoutes, { prefix: '/api/v1/game' });
 
 const start = async () => {
     await app.listen({ port: 3000 });
-    console.log("Server started!");
-}
+    console.log('Server started!');
+};
 
 start();

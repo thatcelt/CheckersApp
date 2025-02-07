@@ -52,7 +52,7 @@ async def cmd_start(message: types.Message):
 
     await message.answer('test', 
                          reply_markup=InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='webApp', 
-                         web_app=WebAppInfo(url='https://4nl8hqj7-5173.euw.devtunnels.ms/'))]]));
+                         web_app=WebAppInfo(url='https://pln4c2t3-5173.euw.devtunnels.ms/'))]]));
 
 async def main():
     await dp.start_polling(bot);

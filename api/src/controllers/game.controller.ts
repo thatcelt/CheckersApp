@@ -7,7 +7,7 @@ import { Game, Piece, Turn } from '../utils/game';
 import { WebSocket } from '@fastify/websocket';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { gameSendMessages, getGameFromRequest, getGameFromSocket } from '../utils/utils';
-import { drawTimeoutValue, emptyBoard, gamesCache, GameTypes, inGameCache, maxPlayers } from '../constants';
+import { drawTimeoutValue, emptyBoard, gamesCache, GameTypes, inGameCache, maxPlayers, pendingInvites } from '../constants';
 import { acceptDrawRequest, drawGameRequest, invitePlayerRequest, acceptInviteRequest, rejectInviteRequest, makeMove, makeMoveWithBot, searchGameRequest, surrenderGame } from '../services/game.service';
 import { CreateGameRequestPayload, GameParams, InvitePlayerRequestBody, OnlineGameWebsocketMessage, BotGameWebsocketMessage, GameWebsocketPayload, CreateGameWithBotRequestPayload } from './types';
 
@@ -139,8 +139,13 @@ export async function invitePlayer(request: FastifyRequest<{ Params: GameParams,
 
 export async function acceptInvite(request: FastifyRequest<{ Params: GameParams }>, reply: FastifyReply) {
     const decodedToken: { userId: string } = await request.jwtDecode();
-    const game = getGameFromRequest(reply, gamesCache.get(request.params.gameId), decodedToken.userId)
-    if (!game || game.gameType != 'private') 
+    const invite = pendingInvites.get(request.params.gameId);
+    const game = gamesCache.get(request.params.gameId);
+
+    if (!game || game.gameType != 'private' || !invite)
+        return reply.status(404).send({ message: 'GAME_IS_NOT_FOUND' });
+    
+    if (!game.players.includes(invite?.inviter))
         return reply.status(403).send({ message: 'FORBIDDEN' });
     if (game.players.length == maxPlayers) 
         return reply.status(400).send({ message: 'GAME_IS_FULL' });
@@ -151,8 +156,13 @@ export async function acceptInvite(request: FastifyRequest<{ Params: GameParams 
 
 export async function rejectInvite(request: FastifyRequest<{ Params: GameParams }>, reply: FastifyReply) {
     const decodedToken: { userId: string } = await request.jwtDecode();
-    const game = getGameFromRequest(reply, gamesCache.get(request.params.gameId), decodedToken.userId)
-    if (!game || game.gameType != 'private') 
+    const invite = pendingInvites.get(request.params.gameId);
+    const game = gamesCache.get(request.params.gameId);
+
+    if (!game || game.gameType != 'private' || !invite)
+        return reply.status(404).send({ message: 'GAME_IS_NOT_FOUND' });
+    
+    if (!game.players.includes(invite?.inviter))
         return reply.status(403).send({ message: 'FORBIDDEN' });
     if (game.players.length == maxPlayers) 
         return reply.status(400).send({ message: 'GAME_IS_FULL' });

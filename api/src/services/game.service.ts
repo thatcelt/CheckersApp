@@ -228,7 +228,7 @@ export async function invitePlayerRequest(reply: FastifyReply, game: CachedGame,
             }
         });
 
-        pendingInvites.set(game.gameId, { invited: playerId });
+        pendingInvites.set(game.gameId, { invited: playerId, inviter: inviterId });
 
         setTimeout(async () => {
             if (pendingInvites.has(game.gameId)) {

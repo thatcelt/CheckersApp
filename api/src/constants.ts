@@ -17,6 +17,7 @@ export type CachedGame = {
 
 export type PendingInvite = {
     invited: string;
+    inviter: string;
 };
 
 export const pendingInvites: Map<string, PendingInvite> = new Map();
