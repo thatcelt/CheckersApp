@@ -7,7 +7,7 @@ const ChipsContainer: FC<{ currentTurn: number, earnedChips: number, type: strin
         <div
             className={`white-chips-container ${currentTurn == RIGHT_BACKLIGHTS.get(type) ? 'chips-container-active' : ''}`}
         >
-            <img src={`../src/resources/assets/${type}chips.png`} alt={type} id={`${type}chipsimage`} />
+            <img src={`../../public/${type}chips.png`} alt={type} id={`${type}chipsimage`} />
             X{earnedChips}
         </div>
         </>

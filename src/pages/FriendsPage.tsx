@@ -56,7 +56,7 @@ const FriendsPage: FC = () => {
                 navigator.clipboard.writeText(textToCopy);
                 notificationController.addNotification({
                     message: getLocalizedString(authContext, 'linkCopied'),
-                    icon: '../src/resources/assets/copy.svg'
+                    icon: '../../public/copy.svg'
                 });
             }
         }
@@ -75,7 +75,7 @@ const FriendsPage: FC = () => {
                     <div className="url-placeholder">
                         <span>{`${BOT_URL}?start=${authContext.user?.userId}`}</span>
                         <div className="copy-button" onClick={(e) => onClickCopyHandler(e)}>
-                            <img src="../src/resources/assets/copy.png" alt="copy" />
+                            <img src="../../public/copy.png" alt="copy" />
                         </div>
                     </div>
                 </div>

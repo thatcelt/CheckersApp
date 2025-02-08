@@ -14,7 +14,7 @@ const GamesPage: FC = () => {
         <>
             <div className="games-container">
                 <div className="underbuttons-container">
-                    <img src="../src/resources/assets/icon-48.svg" alt="HappyGames" />
+                    <img src="../../public/icon-48.svg" alt="HappyGames" />
                     <span>{getLocalizedString(authContext, 'checkersTitle')}</span>
                 </div>
                 <div className="general-button animated" onClick={() => navigate('/play')}>

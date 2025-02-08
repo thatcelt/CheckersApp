@@ -7,8 +7,8 @@ const SettingsCard: FC<{ textArea: string, textEnd?: string, onClick: () => void
             <div className="settings-text-area">{textArea}</div>
             {textEnd ? <div className="setting-card-end">
                 {textEnd}
-                <img className="settings-card-img" src="../src/resources/assets/arrow.svg" alt="Arrow" />
-            </div> : <img className="settings-card-img" src="../src/resources/assets/arrow.svg" alt="Arrow" />}
+                <img className="settings-card-img" src="../../public/arrow.svg" alt="Arrow" />
+            </div> : <img className="settings-card-img" src="../../public/arrow.svg" alt="Arrow" />}
         </div>
         </>
     )

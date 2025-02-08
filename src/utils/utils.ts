@@ -61,12 +61,12 @@ const updateCellDisplay = (authContext: AuthorizationContextType, cell: HTMLElem
     if (!child) return;
 
     const assetMap: Record<number, { src: string; id: string } | null > = {
-        1: { src: '../src/resources/assets/whitechip.png', id: 'chip-cell-id' },
-        2: { src: '../src/resources/assets/blackchip.png', id: 'chip-cell-id' },
-        3: { src: '../src/resources/assets/whiteking.png', id: 'chip-cell-id' },
-        4: { src: '../src/resources/assets/blackking.png', id: 'chip-cell-id' },
+        1: { src: '../../public/whitechip.png', id: 'chip-cell-id' },
+        2: { src: '../../public/blackchip.png', id: 'chip-cell-id' },
+        3: { src: '../../public/whiteking.png', id: 'chip-cell-id' },
+        4: { src: '../../public/blackking.png', id: 'chip-cell-id' },
         9: authContext.user?.possibleMoves
-            ? { src: '../src/resources/assets/move.png', id: 'move-cell-id' }
+            ? { src: '../../public/move.png', id: 'move-cell-id' }
             : null
     };
 

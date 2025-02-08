@@ -14,7 +14,7 @@ const FriendCard: FC<FriendCardProps> = ({avatar, nickname, scores, width, onCli
                         {nickname}
                     </div>
                     <div className="scores-container">
-                        <img src="../src/resources/assets/star.png"/>
+                        <img src="../../public/star.png"/>
                         <div className="scores-count-container">
                             <span>{scores}</span>
                         </div>

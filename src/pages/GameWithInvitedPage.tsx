@@ -177,8 +177,8 @@ const GameWithInvited: FC = () => {
                 </div>
                 <Desk/>
                 <div className="action-buttons-container">
-                    <ActionGameButton title={getLocalizedString(authContext, 'giveUp')} icon='../src/resources/assets/giveup.png' onClick={onClickGiveUp}/>
-                    <ActionGameButton title={getLocalizedString(authContext, 'draw')} icon='../src/resources/assets/draw.png' onClick={onClickDraw}/>
+                    <ActionGameButton title={getLocalizedString(authContext, 'giveUp')} icon='../../public/giveup.png' onClick={onClickGiveUp}/>
+                    <ActionGameButton title={getLocalizedString(authContext, 'draw')} icon='../../public/draw.png' onClick={onClickDraw}/>
                 </div>
 
                 <BottomPanel activeVariant="games" socket={socketContext.ws.current!} gameId={gameContext.gameId}/>

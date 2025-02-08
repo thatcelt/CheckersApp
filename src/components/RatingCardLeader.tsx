@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { RatingCardProps } from '../props/ratingCardProps';
 
 const RatingLeaderCard: FC<RatingCardProps> = ({avatar, nickname, scores, index}) => {
-    const cupPath = `../src/resources/assets/${index + 1}.png`;
+    const cupPath = `../../public/${index + 1}.png`;
     const placeColors = new Map()
         .set(0, '#FFB835')
         .set(1, '#FCD385')
@@ -25,7 +25,7 @@ const RatingLeaderCard: FC<RatingCardProps> = ({avatar, nickname, scores, index}
                 </div>
                 <div className="rating-scores-list-container">
                     <div className="rating-scores-container">
-                        <img src="../src/resources/assets/star.png"/>
+                        <img src="../../public/star.png"/>
                         <div className="rating-scores-count-container">
                             <span>{scores}</span>
                         </div>

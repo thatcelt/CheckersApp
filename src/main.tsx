@@ -13,8 +13,6 @@ if (window.Telegram?.WebApp) {
 	tg.disableVerticalSwipes();
 	tg.expand();
 	tg.lockOrientation();
-
-	const platform = tg.platform;
 	tg.requestFullscreen();
 } else {
 	console.error('Telegram WebApp API не найден.');

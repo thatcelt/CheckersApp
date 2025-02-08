@@ -6,7 +6,7 @@ import { useAuthorization } from '../hooks/useAuthorization';
 import { modalController } from './ModalProvider';
 import { LanguageTranslations } from '../utils/types';
 import { useNavigate } from 'react-router-dom';
-import { createGameWithBot, invitePlayer } from '../utils/apiWrapper';
+import { invitePlayer } from '../utils/apiWrapper';
 
 export const GameContext = createContext<GameContextType | undefined>(undefined)
 
@@ -58,8 +58,9 @@ const GameProvider: FC<{ children: ReactNode }> = ({ children }) => {
         gameContext.setChipsColor(1);
         gameContext.setCurrentTurn(1);
         gameContext.setGameSocket(null);
-        if (gameContext.gameSocket?.readyState === WebSocket.OPEN)
+        if (gameContext.gameSocket?.readyState === WebSocket.OPEN) {
             gameContext.gameSocket.close();
+        }
         gameContext.setActivePiece(null);
         gameContext.setPlayers([]);
         gameContext.setEarnedWhiteChips(0);

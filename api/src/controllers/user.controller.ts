@@ -62,10 +62,11 @@ export async function authorize(request: FastifyRequest, reply: FastifyReply) {
                     registrationDate: Date.now().toString()
                 }
             })
-        } else if (user.profilePicture !== telegramUser.photo_url) {
+        } else if (user.profilePicture !== telegramUser.photo_url || user.userTag !== telegramUser.username) {
             await prisma.user.update({
                 data: {
-                    profilePicture: telegramUser.photo_url
+                    profilePicture: telegramUser.photo_url,
+                    userTag: telegramUser.username
                 },
                 where: {
                     userId: telegramUser.id
@@ -150,14 +151,15 @@ export async function onlineWebsocketConnect(socket: WebSocket, request: OnlineW
 
     socket.on('message', (data) => {
         const message = JSON.parse(data.toString());
-        console.log(message)
     });
 
     socket.on('close', () => {
         usersCache.delete(decodedToken.userId);
-        const gameSocket = inGameCache.get(decodedToken.userId);
-        if (gameSocket) {
-            gameSocket.close();
-        }
+        setTimeout(async () => {
+            const gameSocket = inGameCache.get(decodedToken.userId);
+            if (gameSocket && !usersCache.get(decodedToken.userId)) {
+                gameSocket.close();
+            }
+        }, 10000)
     });
 }

@@ -15,7 +15,7 @@ const RatingProfileCard: FC<{ scores?: number, profilePicture?: string, position
             <div className="scores-info">
                 <span className="scores-info-nickname">{getLocalizedString(authContext, 'currentRating')} #{position}</span>
                 <div className="scores-count">
-                    <img src="../src/resources/assets/star.png" alt="Star Icon" />
+                    <img src="../../public/star.png" alt="Star Icon" />
                     <div className="my-scores-count-container">
                         <span>{scores}</span>
                     </div>

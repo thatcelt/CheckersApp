@@ -1,6 +1,6 @@
 import { PlayerData } from '../context/types';
 
-export const API_URL = 'pln4c2t3-3000.euw.devtunnels.ms';
+export const API_URL = '4nl8hqj7-3000.euw.devtunnels.ms';
 export const SUPPORT_URL = 'https://t.me/happygames_support';
 export const BOT_URL = 'https://t.me/HappyGamessBot'
 
@@ -43,7 +43,7 @@ export const WHITE_CELLS = [
 
 export const BOT_PLAYER_DATA: PlayerData = {
     nickname: 'Bot',
-    avatar: '../src/resources/assets/bot.svg',
+    avatar: '../../public/bot.svg',
     type: 'bot',
     objectId: '2'
 }
@@ -51,12 +51,12 @@ export const RIGHT_BACKLIGHTS = new Map()
     .set('black', 2)
     .set('white', 1)
 
-export const WHITE_CHIP_IMAGE = "../src/resources/assets/whitechip.png"
-export const BLACK_CHIP_IMAGE = "../src/resources/assets/blackchip.png"
-export const WHITE_KING_IMAGE = "../src/resources/assets/whiteking.png"
-export const BLACK_KING_IMAGE = "../src/resources/assets/blackking.png"
-export const MOVE_IMAGE = "../src/resources/assets/move.png"
-export const EMPTY_IMAGE = "../src/resources/assets/empty.png"
+export const WHITE_CHIP_IMAGE = "../../public/whitechip.png"
+export const BLACK_CHIP_IMAGE = "../../public/blackchip.png"
+export const WHITE_KING_IMAGE = "../../public/whiteking.png"
+export const BLACK_KING_IMAGE = "../../public/blackking.png"
+export const MOVE_IMAGE = "../../public/move.png"
+export const EMPTY_IMAGE = "../../public/empty.png"
 export const TERMS = new Map<string, Promise<{title: string, content: {title: string, description: string}[]}>>()
     .set('ua', import('../resources/locales/ua_terms.json'))
     .set('ru', import('../resources/locales/ru_terms.json'))
@@ -85,3 +85,18 @@ export const CHIPS_ANIMATION_OPTIONS: KeyframeAnimationOptions = {
     easing: 'cubic-bezier(0.25, 1, 0.3, 1)',
     fill: 'forwards'
 }
+
+export const LAZY_COMPONENTS = [
+    () => import('../pages/PreLoadingPage.tsx'),
+    () => import('../pages/LevelSelectingPage.tsx'),
+    () => import('../pages/GamesPage.tsx'),
+    () => import('../pages/GameSelectingPage'),
+    () => import('../pages/GameOnlinePage.tsx'),
+    () => import('../pages/GameOnOneDevicePage.tsx'),
+    () => import('../pages/GameWithBotPage.tsx'),
+    () => import('../pages/GameWithInvitedPage.tsx'),
+    () => import('../pages/ProfilePage.tsx'),
+    () => import('../pages/RatingPage.tsx'),
+    () => import('../pages/FriendsPage.tsx'),
+    () => import('../pages/SettingsPage.tsx')
+];

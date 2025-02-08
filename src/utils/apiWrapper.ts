@@ -138,9 +138,6 @@ export async function createGameOnOneDevice(): Promise<{ gameId: string } | unde
 
 export function connectGameOnOneDevice(gameId: string, onMessage: (message: any) => void) {
     const gameSocket = new WebSocket(`wss://${API_URL}/api/v1/game/oneDevice?gameId=${gameId}&token=${token}`)
-    gameSocket.onopen = () => console.log('Websocket is connected');
-    gameSocket.onerror = error => console.error('WebSocket error:', error);
-    gameSocket.onclose = x => console.log('Websocket is closed', x);
     
     gameSocket.onmessage = packet => {
         const message = JSON.parse(packet.data);
@@ -152,9 +149,6 @@ export function connectGameOnOneDevice(gameId: string, onMessage: (message: any)
 
 export function connectGameSocket(gameId: string, onMessage: (message: any) => void) {
     const gameSocket = new WebSocket(`wss://${API_URL}/api/v1/game?gameId=${gameId}&token=${token}`)
-    gameSocket.onopen = () => console.log('Websocket is connected');
-    gameSocket.onerror = error => console.error('WebSocket error:', error);
-    gameSocket.onclose = x => console.log('Websocket is closed', x);
     
     gameSocket.onmessage = packet => {
         const message = JSON.parse(packet.data);
@@ -166,9 +160,6 @@ export function connectGameSocket(gameId: string, onMessage: (message: any) => v
 
 export function connectGameWithBotSocket(gameId: string, onMessage: (message: any) => void) {
     const gameSocket = new WebSocket(`wss://${API_URL}/api/v1/game/vsBot?gameId=${gameId}&token=${token}`)
-    gameSocket.onopen = () => console.log('Websocket is connected');
-    gameSocket.onclose = x => console.log('Websocket is closed', x);
-    gameSocket.onerror = error => console.error('WebSocket error:', error);
     
     gameSocket.onmessage = packet => {
         const message = JSON.parse(packet.data);

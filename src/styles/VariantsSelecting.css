@@ -24,7 +24,6 @@
     border-radius: 14px;
     display: flex;
     align-items: center;
-    outline: 5px solid #FFF;
     justify-content: space-between;
     font-size: 16px;
     background: #FFF;
@@ -32,6 +31,18 @@
                 -2px -2px 4px 0px rgba(255, 255, 255, 0.30) inset, 
                 1px 1px 3px 0px rgba(0, 0, 0, 0.15), 
                 1px 1px 10px 0px rgba(0, 0, 0, 0.15);
+}
+
+.selecting-variant::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    border-radius: 16px;
+    z-index: -1;
+    border: 5px solid #FFF;
 }
 
 .selecting-variant-content {

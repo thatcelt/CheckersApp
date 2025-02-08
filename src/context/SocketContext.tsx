@@ -17,16 +17,8 @@ const SocketProvider: FC<{ children: ReactNode }> = ({ children }) => {
             return;
 
         ws.current = new WebSocket(webSocketURI!);
-
-        ws.current.onopen = () => {
-            console.log('Websocket is connected', webSocketURI);
-            
-        };
-    
-        ws.current.onerror = error => console.error('WebSocket error:', error);
     
         ws.current.onclose = () => {
-            console.log('Websocket is closed');
             clearInterval(webSocketURI);
         };
     

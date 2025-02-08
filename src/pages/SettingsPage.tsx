@@ -134,7 +134,7 @@ const SettingsPage: FC = () => {
         <>
         <div className="settings-buttons-container">
             <div className="back-button" onClick={() => navigate('/profile')}>
-                <img src="../src/resources/assets/backarrow.png" alt="Back" />
+                <img src="../../public/backarrow.png" alt="Back" />
                 <span>{getLocalizedString(authContext, 'back')}</span> {/* Localized */}
             </div>
         </div>

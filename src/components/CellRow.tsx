@@ -24,8 +24,6 @@ export const CellRow: FC<{ elementInRow: number[], row: number }> = ({elementInR
     
     return (
         <>
-        <img src="..src/resources/assets/whiteking.png" style={{visibility: 'hidden', width: '0px', position: 'absolute' }}/>
-        <img src="..src/resources/assets/blackking.png" style={{visibility: 'hidden', width: '0px', position: 'absolute' }}/> 
         <div className="cells-row">
             {
                 elementInRow.map((element, index) => 

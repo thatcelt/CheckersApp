@@ -126,7 +126,7 @@ const GameWithBot: FC = () => {
                 </div>
                 <Desk/>
                 <div className="action-buttons-container">
-                    <ActionGameButton title={getLocalizedString(authContext, 'giveUp')} icon='../src/resources/assets/giveup.png' onClick={onClickGiveUp}/>
+                    <ActionGameButton title={getLocalizedString(authContext, 'giveUp')} icon='../../public/giveup.png' onClick={onClickGiveUp}/>
                 </div>
 
                 <BottomPanel activeVariant="games" socket={socketContext.ws.current!} gameId={gameContext.gameId}/>

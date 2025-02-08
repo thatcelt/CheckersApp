@@ -1,5 +1,6 @@
 export interface AuthorizeResponseUser {
     userId: string;
+    userTag?: string;
     username: string;
     language: string;
     profilePicture: string;

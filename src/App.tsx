@@ -6,6 +6,7 @@ import { NotificationProvider } from './context/NotifyProvider.tsx';
 import AuthorizationProvider from './context/AuthorizationContext.tsx';
 import PreLoadingPage from './pages/PreLoadingPage.tsx';
 import OnlineSocketProvider from './context/OnlineSocketContext.tsx'
+
 import './styles/App.css';
 
 const Profile = lazy(() => import('./pages/ProfilePage.tsx'));
@@ -26,26 +27,26 @@ const App: FC = () => {
 			<ModalProvider>
 				<NotificationProvider>
 						<AuthorizationProvider>
-							<PreLoadingPage>
-								<OnlineSocketProvider>
-									<Suspense fallback={<div>Loading...</div>}>
-										<Routes>
-											<Route path='/' element={<Games/>}/>
-											<Route path='/games' element={<Games/>}/>
-											<Route path='/select-level' element={<SelectLevel/>}/>
-											<Route path='/game-with-bot/:difficulty' element={<GameWithBot/>}/>
-											<Route path='/profile' element={<Profile/>}/>
-											<Route path='/play' element={<GameWithPlayer/>}/>
-											<Route path='/play-with-invited' element={<GameWithInvited/>}/>
-											<Route path='/settings' element={<Settings/>}/>
-											<Route path='/rating' element={<Rating/>}/>
-											<Route path='/friends' element={<Friends/>}/>
-											<Route path='/game-on-one-device' element={<GameOnOneDevice/>}/>
-											<Route path='/select-game-type' element={<GamesSelecting/>}/>
-										</Routes>
-									</Suspense>
-								</OnlineSocketProvider>
-							</PreLoadingPage>
+								<PreLoadingPage>
+									<OnlineSocketProvider>
+										<Suspense fallback={<div>Loading...</div>}>
+											<Routes>
+												<Route path='/' element={<Games/>}/>
+												<Route path='/games' element={<Games/>}/>
+												<Route path='/select-level' element={<SelectLevel/>}/>
+												<Route path='/game-with-bot/:difficulty' element={<GameWithBot/>}/>
+												<Route path='/profile' element={<Profile/>}/>
+												<Route path='/play' element={<GameWithPlayer/>}/>
+												<Route path='/play-with-invited' element={<GameWithInvited/>}/>
+												<Route path='/settings' element={<Settings/>}/>
+												<Route path='/rating' element={<Rating/>}/>
+												<Route path='/friends' element={<Friends/>}/>
+												<Route path='/game-on-one-device' element={<GameOnOneDevice/>}/>
+												<Route path='/select-game-type' element={<GamesSelecting/>}/>
+											</Routes>
+										</Suspense>
+									</OnlineSocketProvider>
+								</PreLoadingPage>
 						</AuthorizationProvider>
 				</NotificationProvider>
 			</ModalProvider>

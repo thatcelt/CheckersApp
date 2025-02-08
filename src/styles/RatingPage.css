@@ -49,6 +49,18 @@
     transition: transform 0.2s ease-in-out;
 }
 
+.scores-card::before {
+    content: '';
+    position: absolute;
+    top: -9px;
+    left: -9px;
+    right: -9px;
+    bottom: -9px;
+    border: 8px solid #A4A4A4;
+    border-radius: 28px;
+    z-index: -1;
+}
+
 .scores-avatar {
     margin-left: 18px;
     width: 82px;

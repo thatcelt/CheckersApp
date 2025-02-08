@@ -1,43 +1,31 @@
 import { FC, lazy, ReactNode, useEffect, useState } from 'react';
 import '../styles/PreLoadingPage.css';
+import { LAZY_COMPONENTS } from '../utils/constants';
+import { useNavigate } from 'react-router-dom';
 
 const PreLoadingPage: FC<{ children: ReactNode }> = ({ children }) => {
     const [shouldRender, setShouldRender] = useState(false);
     const [progress, setProgress] = useState(0);
-    const lazyComponents = [
-        () => import('./PreLoadingPage.tsx'),
-        () => import('./LevelSelectingPage.tsx'),
-        () => import('./GamesPage.tsx'),
-        () => import('./GameSelectingPage'),
-        () => import('./GameOnlinePage.tsx'),
-        () => import('./GameOnOneDevicePage.tsx'),
-        () => import('./GameWithBotPage.tsx'),
-        () => import('./GameWithInvitedPage.tsx'),
-        () => import('./ProfilePage.tsx'),
-        () => import('./RatingPage.tsx'),
-        () => import('./FriendsPage.tsx'),
-        () => import('./SettingsPage.tsx')
-    ];
+    const navigate = useNavigate()
 
     let isLoading = false;
     useEffect(() => {
         if (isLoading) return;
         isLoading = true;
-        
-        const totalComponents = lazyComponents.length;
-        let loadedComponents = 0;
+        let loadedComponents = 0
 
         const loadComponents = async () => {
-            for (const lazyComponent of lazyComponents) {
+            for (const lazyComponent of LAZY_COMPONENTS) {
                 lazy(lazyComponent);
-                await new Promise(resolve => setTimeout(resolve, (Math.floor(Math.random() * 1) + 0.5) * 1000));
-                loadedComponents++;
+                await new Promise(resolve => setTimeout(resolve, 500));
+                loadedComponents++
                 
-                const progressPercentage = (loadedComponents / totalComponents) * 100;
+                const progressPercentage = (loadedComponents / LAZY_COMPONENTS.length) * 100;
                 setProgress(progressPercentage);
 
-                if (loadedComponents === totalComponents)
+                if (loadedComponents === LAZY_COMPONENTS.length)
                     setShouldRender(true);
+                navigate('/games')
             }
         };
 
@@ -52,7 +40,7 @@ const PreLoadingPage: FC<{ children: ReactNode }> = ({ children }) => {
         <div className="loading-container">
             <span>HAPPY GAMES</span>
             <div className="loading-image">
-                <img src="../src/resources/assets/Group.svg" />
+                <img src="../../public/Group.svg"/>
                 <div className="spinner"></div>
                 <div className="loading-text">Loading</div>
                 <div className="progress">

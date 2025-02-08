@@ -55,7 +55,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
                 {currentNotify && <div ref={notificationRef as RefObject<HTMLDivElement>} className="notification" id={`notification-${currentNotify.id ? currentNotify.id : 1}`}>
                         {currentNotify.icon && <img src={ currentNotify.icon } className="notification-icon" />}
                         <div className="notification-message">{currentNotify.message}</div>
-                        <img src="../src/resources/assets/x.svg" className="notification-close"  onClick={() => removeNotification(currentNotify.id ? currentNotify.id : 1)} />
+                        <img src="../../public/x.svg" className="notification-close"  onClick={() => removeNotification(currentNotify.id ? currentNotify.id : 1)} />
                     </div>}
             </div>
         </NotificationContext.Provider>

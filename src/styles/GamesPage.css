@@ -40,8 +40,19 @@
     background-color: #FFFFFF;
     border-radius: 14px;
     border: 1px solid #999;
-    outline: 12px solid #FFB835;
     margin-bottom: 42px;
+}
+
+.general-button::before {
+  content: '';
+  position: absolute;
+  top: -14px;
+  left: -14px;
+  right: -14px;
+  bottom: -14px;
+  border: 13px solid #FFB835;
+  border-radius: 27px;
+  z-index: -1;
 }
 
 .pair-buttons {
@@ -63,7 +74,18 @@
     border-radius: 14px;
     background-color: #FFFFFF;
     border: 2px solid #FFB835;
-    outline: 10px solid #FFFFFF;
+}
+
+.under-button::before {
+  content: '';
+  position: absolute;
+  top: -12px;
+  left: -12px;
+  right: -12px;
+  bottom: -12px;
+  border: 10px solid #FFFFFF;
+  border-radius: 24px;
+  z-index: -1;
 }
 
 .games-shining {

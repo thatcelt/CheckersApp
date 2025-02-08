@@ -6,14 +6,15 @@ import asyncio
 import aiomysql
 import time
 
-API_TOKEN = '7654017552:AAEDl7mebBF6ZHdXuZXWD3nDOlY1f9UXdfE'
+API_TOKEN = ''
 DB_CONFIG = {
     'host': 'localhost',
-    'port': 1488,
+    'port': 5000,
     'user': 'root',
     'password': 'root',
     'db': 'happycheckers'
 }
+APP_URL = ''
 
 bot = Bot(token=API_TOKEN);
 dp = Dispatcher();
@@ -52,7 +53,7 @@ async def cmd_start(message: types.Message):
 
     await message.answer('test', 
                          reply_markup=InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='webApp', 
-                         web_app=WebAppInfo(url='https://pln4c2t3-5173.euw.devtunnels.ms/'))]]));
+                         web_app=WebAppInfo(url=APP_URL))]]));
 
 async def main():
     await dp.start_polling(bot);

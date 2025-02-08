@@ -70,7 +70,7 @@ const BottomPanel: FC<{ activeVariant: string, socket?: WebSocket, gameId?: stri
                 <BottomPanelButton name="rating" onClick={onClickNavigate} icon="cup_icon"/>
                 <div className="rectangle" id="games" onClick={(e) => onClickNavigate(e)}>
                     <div className="variant-play" id="games">
-                        <img src="../src/resources/assets/play.png" />
+                        <img src="../../public/play.png" />
                         {getLocalizedString(authContext, 'play')}
                     </div>
                 </div>

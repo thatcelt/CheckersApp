@@ -277,7 +277,6 @@ export async function rejectInviteRequest(reply: FastifyReply, game: CachedGame,
             userId: game.players[0]
         }
     });
-
     inGameCache.get(game.players[0])?.close();
     inGameCache.delete(game.players[0]);
     gamesCache.delete(game.gameId);

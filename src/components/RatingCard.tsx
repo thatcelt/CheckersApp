@@ -17,7 +17,7 @@ const RatingCard: FC<RatingCardProps> = ({avatar, nickname, scores, index}) => {
                     {nickname}
                 </div>
                 <div className="rating-scores-container">
-                    <img src="../src/resources/assets/star.png"/>
+                    <img src="../../public/star.png"/>
                     <div className="rating-scores-count-container">
                         <span>{scores}</span>
                     </div>

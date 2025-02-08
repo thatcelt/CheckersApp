@@ -1,9 +1,12 @@
 import React, { Dispatch } from 'react';
 import { AuthorizeResponseUser } from '../utils/types';
+import { GameHistory, RatingResponse } from '@/pages/types';
 
 export interface AuthorizationContextType {
     user: AuthorizeResponseUser | null;
     token: string;
+    gameHistory: GameHistory[] | never[]
+    ratingDataRef: React.MutableRefObject<RatingResponse | null>;
     setUser: Dispatch<React.SetStateAction<AuthorizeResponseUser | null>>
 }
 
@@ -56,6 +59,15 @@ export interface GameContextType {
     setPossibleMultipleMoves: React.Dispatch<React.SetStateAction<number[][]>>;
     resetGame: (gameContext: GameContextType) => void;
     handleMessage: (socket: WebSocket, gameContext: GameContextType, message: string) => void;
+}
+
+export interface DataLoaderContextType {
+    userData: AuthorizeResponseUser | null;
+    gameHistory: GameHistory[] | never[];
+    ratingData: RatingResponse | null;
+    setUser: Dispatch<React.SetStateAction<AuthorizeResponseUser | null>>
+    setGameHistory: Dispatch<React.SetStateAction<GameHistory[] | never[]>>
+    setRatingData: Dispatch<React.SetStateAction<RatingResponse | null>>
 }
 
 export interface OnlineSocketContextType {

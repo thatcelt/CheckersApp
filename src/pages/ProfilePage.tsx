@@ -1,46 +1,35 @@
-import { FC, memo, useCallback, useEffect, useState } from 'react';
-import { getUser } from '../utils/apiWrapper';
+import { FC, memo, useEffect } from 'react';
 import { useAuthorization } from '../hooks/useAuthorization';
 import { useNavigate } from 'react-router-dom';
 import { formatDate, getLocalizedString } from '../utils/utils';
 import ProfileCard from '../components/ProfileCard';
 import ProfileStatistics from '../components/ProfileStatistics';
-import { GameHistory, UserData } from './types';
 import '../styles/ProfilePage.css'
 import BottomPanel from '../components/BottomPanel';
 
 const ProfilePage: FC = () => {
     const navigate = useNavigate();
     const authContext = useAuthorization();
-    const [userData, setUserData] = useState<{ user: UserData, gameHistory: GameHistory[] }>({
+    const userData = {
         user: {
             username: authContext.user!.username,
+            userTag: authContext.user!.userTag,
             profilePicture: authContext.user!.profilePicture,
             registrationDate: authContext.user!.registrationDate
         },
-        gameHistory: []
-    });
-
-    const getUserData = useCallback(async () => {
-        const userResults = await getUser(authContext.user?.userId as unknown as string)
-        setUserData({
-            user: userResults.user,
-            gameHistory: userResults.gameHistory
-        });
-
-        if (userResults.user.username.length > 12) 
-            userData!.user.username = userResults.user.username.slice(0, 12) + '...';
-    }, [userData]);
+        gameHistory: authContext.gameHistory
+    };
 
     useEffect(() => {
-        getUserData();
+        if (userData.user.username.length > 12) 
+            userData!.user.username = userData.user.username.slice(0, 12) + '...';
     }, []);
     
     return (
         <>
             <div className="buttons-container">
                 <div className="settings-button" onClick={() => navigate('/settings')}>
-                    <img src="../src/resources/assets/settings.png" alt={getLocalizedString(authContext, 'settings')} />
+                    <img src="../../public/settings.png" alt={getLocalizedString(authContext, 'settings')} />
                 </div>
             </div>
             <div className="profile-container">

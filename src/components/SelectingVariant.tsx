@@ -7,7 +7,7 @@ const SelectingVariant: FC<{ title: string, onSubmit: () => void }> = ({ title, 
             <div className="selecting-variant-content">
                 {title}
             </div>
-            <img src="../src/resources/assets/arrow.svg" alt="Arrow" />
+            <img src="../../public/arrow.svg" alt="Arrow" />
         </div>
         </>
     )

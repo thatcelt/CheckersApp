@@ -3,7 +3,7 @@
     max-width: 400px;
     aspect-ratio: 1 / 1;
     max-height: 400px;
-    background-image: url(../src/resources/assets/board_2.png);
+    background-image: url(../../public/board_2.png);
     background-repeat: no-repeat;
     background-size: cover;
     display: flex;

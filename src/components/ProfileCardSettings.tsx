@@ -42,7 +42,7 @@ const ProfileCardSettings: FC<ProfileCardSettingsProps> = ({ username, profilePi
                     </span>
                 </div>
                 <div className="edit-profile-button" onClick={openChangeUsername}>
-                    <img src="../src/resources/assets/edit.png" alt="Edit" />
+                    <img src="../../public/edit.png" alt="Edit" />
                 </div>
             </div>
         </div>
