@@ -1,10 +1,10 @@
 import { PlayerData } from '../context/types';
 
-export const API_URL = '4nl8hqj7-3000.euw.devtunnels.ms';
-export const SUPPORT_URL = 'https://t.me/happygames_support';
-export const BOT_URL = 'https://t.me/HappyGamessBot'
+export const API_URL = '';
+export const SUPPORT_URL = '';
+export const BOT_URL = ''
 
-export const getForwardLink = (referralLink: string) => { return `https://telegram.me/share/url?url=${referralLink}&text=%0ALets%27%20play%20HappyCheckers%20with%20me` }
+export const getForwardLink = (referralLink: string) => { return `https://telegram.me/share/url?url=${referralLink}&text=sometext` }
 
 export const EMPTY_BOARD = [
     [0, 2, 0, 2, 0, 2, 0, 2],
